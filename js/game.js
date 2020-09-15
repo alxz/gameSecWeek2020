@@ -187,7 +187,7 @@ App.prototype.start = function () {
             shadow: "offsetX = 5, offsetY = 5, fill= true"
           });
 
-        playPosText = this.add.text(200, 16, 'Pos: 0',
+        playPosText = this.add.text(260, 16, 'Pos: 0',
           {
             fontSize: '32px',
             fill: '#FDFC00',
@@ -246,7 +246,8 @@ App.prototype.start = function () {
         drawScores(_this);
         player.prevPos = {x: player.x, y: player.y};
         playerNavigationHandler();
-        dudeUpdate(player);
+        // dudeUpdate(player);
+        dudeUpdate(player); //update the NPC state
         playSound(music);  // play background music
     }
 
@@ -261,6 +262,9 @@ App.prototype.start = function () {
         scoreText.setText('Score: ' + totalQestionsAnswered);
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
+        playPosText.setText('Pos: ' + Math.floor(player.x / 800) + ' / ' +  Math.floor(player.y / 520));
+        playPosText.x = 250 + player.x - 400;
+        playPosText.y = 50 + player.y - 300;
         if (language === 'FRA') {
           divScoreText.innerHTML = "Vous avez " + player.doorKeys + " clé(s) <br><hr/><br>";
         } else {
@@ -276,15 +280,21 @@ App.prototype.start = function () {
         var deltaX = Math.floor(thisX / 800);
         var deltaY = Math.floor(thisY / 520);
         // player.mazeCoord = { mazeX: deltaX, mazeY: deltaY };
-        playPosText.setText('Pos: ' + deltaX + ' / ' +  deltaY);
-        playPosText.x = 250 + player.x - 400;
-        playPosText.y = 50 + player.y - 300;
         doorkeys.children.iterate(child => {
           if (child.roomCoord.x === deltaX && child.roomCoord.y === deltaY) {
-              child.setVelocityX(150);
-              //if ()
-              child.anims.play('walkingDudeRight', true);
+            var vector = child.moveVector;
+              if (vector == 1) {
+                child.setVelocityX(100);
+                child.anims.play('walkingDudeRight', true);
+              }
+              if (vector == -1)  {
+                child.setVelocityX(-100);
+                child.anims.play('walkingDudeLeft', true);
+
+              }
+
             //alert("Collision detected!");
+            // console.log('--> dude state changes!');
           }
           // if (child && child.getBounds().contains(deltaX, deltaY)) {
           //   child.destroy(child, true);
@@ -295,11 +305,23 @@ App.prototype.start = function () {
 
     function npcHitTheWall(npc, wall) {
       var initXY = npc.initCoord;
-        npc.setX( initXY.x );
+      //child.anims.play('marchingDude', true);
+      if (npc.moveVector == -1) {
+        npc.anims.play('walkingDudeRight', true);
+        npc.moveVector = 1;
+      }
+      if (npc.moveVector == 1) {
+        npc.anims.play('walkingDudeLeft', true);
+        npc.moveVector = -1;
+      }
+
+        // npc.setX( initXY.x );
+
     }
 
     function hitTheDoor(player, door) {
       player.doorKeys = 1; //set it to a constant to do all tests without scores
+      dudeUpdate(player); //update the NPC state
         if (player.doorKeys > 0 && !door.isOpen) {
             playSound(doorOpen);
             stopPlayer();
@@ -346,6 +368,7 @@ App.prototype.start = function () {
                     break;
                 default:
             }
+
             return true;
         }
         return true;
@@ -357,12 +380,13 @@ App.prototype.start = function () {
     }
 
     function collectKey(player, key) {
+
         try {
           userTimer.start();
         } catch (e) {
           console.log('Error! Can\'t start a timer!',e.toString());
         }
-
+        stopNPC(key);
         if (isPause) return;
         // if (theGameIsStarted === false) {
         //   //if the game has started then change the boolean flag:
@@ -373,7 +397,6 @@ App.prototype.start = function () {
         playSound(pickupKey);
         stopPlayer();
         isPause = true;
-
         totalQestionsAsked++;
         var ifSuccessCallback = function () {
             //submitAnswerButton.style.display = 'none';
@@ -437,6 +460,15 @@ App.prototype.start = function () {
         player.anims.play('turn');
         //if (!isBrowserIE) {
          soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
+       //}
+    }
+
+    function stopNPC(npcObj) {
+        npcObj.setVelocityX(0);
+        npcObj.setVelocityY(0);
+        npcObj.anims.play('marchingDude');
+        //if (!isBrowserIE) {
+        // soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
        //}
     }
 
@@ -663,6 +695,7 @@ App.prototype.start = function () {
                         var myDude = doorkeys.create(coord.x, coord.y, 'docOther').setScale(1); //doors keys (dude)
                         myDude.question = megaMAP.questionList[keyIndex];
                         myDude.id = keyIndex;
+                        myDude.moveVector = 1;
                         myDude.roomCoord = { x: x, y: y};
                         myDude.initCoord = { x: coord.x, y: coord.y};
                         // myDude.roomCoord.x = x;
