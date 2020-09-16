@@ -28,7 +28,7 @@ App.prototype.start = function () {
     var userInfo;    var userIUN;
     var player;    var room;    var stars;
     var theGameIsStarted = false;
-    var platforms;
+    var platforms; 
     var cursors;
     var score = 0;
     var gameOver = false;
@@ -275,19 +275,19 @@ App.prototype.start = function () {
     function dudeUpdate(player) {
         // Here we calculate which NPC to move and how to move
         // player.x and player.y - its a player coordinates
-        thisX = player.x;
-        thisY = player.y;
-        var deltaX = Math.floor(thisX / 800);
-        var deltaY = Math.floor(thisY / 520);
+        let thisX = player.x;
+        let thisY = player.y;
+        let deltaX = Math.floor(thisX / 800);
+        let deltaY = Math.floor(thisY / 520);
         // player.mazeCoord = { mazeX: deltaX, mazeY: deltaY };
         doorkeys.children.iterate(child => {
           if (child.roomCoord.x === deltaX && child.roomCoord.y === deltaY) {
             var vector = child.moveVector;
-              if (vector == 1) {
+              if (vector === 1) {
                 child.setVelocityX(100);
                 child.anims.play('walkingDudeRight', true);
               }
-              if (vector == -1)  {
+              if (vector === -1)  {
                 child.setVelocityX(-100);
                 child.anims.play('walkingDudeLeft', true);
 
@@ -306,11 +306,10 @@ App.prototype.start = function () {
     function npcHitTheWall(npc, wall) {
       var initXY = npc.initCoord;
       //child.anims.play('marchingDude', true);
-      if (npc.moveVector == -1) {
+      if (npc.moveVector === -1) {
         npc.anims.play('walkingDudeRight', true);
         npc.moveVector = 1;
-      }
-      if (npc.moveVector == 1) {
+      } else if (npc.moveVector === 1) {
         npc.anims.play('walkingDudeLeft', true);
         npc.moveVector = -1;
       }
@@ -401,7 +400,12 @@ App.prototype.start = function () {
         var ifSuccessCallback = function () {
             //submitAnswerButton.style.display = 'none';
             playSound(soundOk);
-            key.disableBody(true, true);
+            key.disableBody(true, true); // this is to remove the key(object) from the scene
+            // keyPlayerOverlap
+            // var platformCollider = this.physics.add.collider(object,object);
+            // this.physics.world.removeCollider(platformCollider);
+            //this.physics.world.removeCollider(keyPlayerOverlap);
+
             isPause = false;
             player.doorKeys++;
             //player.doorKeys+=10;
