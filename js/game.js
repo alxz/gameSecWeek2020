@@ -133,8 +133,12 @@ App.prototype.start = function () {
         //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         //this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
         //docMUHC50x75L4U4D4R4
-        this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
+        //this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
+        this.load.spritesheet('docOther', 'png/HSoloMan2_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
         this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
+        //HSoloMan_SingleImg_Sprite
+        this.load.spritesheet('HSoloSingleImg', 'png/HSoloMan_SingleImg_Sprite.png', {frameWidth: 64, frameHeight: 72});
+        this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v1.png', {frameWidth: 75, frameHeight: 72});
     }
 
     function buildGameState(userName, sessionId) {
@@ -305,10 +309,10 @@ App.prototype.start = function () {
       var initXY = npc.initCoord;
       //child.anims.play('marchingDude', true);
       if (npc.moveVector === -1) {
-        npc.anims.play('marchingDude', false);
+        npc.anims.play('HSoloSingleImg', false);
         npc.moveVector = 1;
       } else if (npc.moveVector === 1) {
-        npc.anims.play('marchingDude', false);
+        npc.anims.play('HSoloSingleImg', false);
         npc.moveVector = -1;
       }
 
@@ -689,6 +693,13 @@ App.prototype.start = function () {
                             frameRate: 5,
                             repeat: -1
                         });
+                        scene.anims.create({
+                            key: 'HSoloSingleImg',
+                            frames: scene.anims.generateFrameNumbers('HSoloSingleImg'),
+                            frameRate: 1,
+                            repeat: -1
+                        });
+
 
 
                         // var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
@@ -703,7 +714,7 @@ App.prototype.start = function () {
                         // myDude.roomCoord.x = x;
                         // myDude.roomCoord.y = y;
                         console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
-                        myDude.anims.play('marchingDude', true);
+                        myDude.anims.play('HSoloSingleImg', true);
 
                         //console.log("question from key", myKey.question);
                         keyIndex++;
