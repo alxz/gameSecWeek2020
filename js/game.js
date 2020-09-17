@@ -28,7 +28,7 @@ App.prototype.start = function () {
     var userInfo;    var userIUN;
     var player;    var room;    var stars;
     var theGameIsStarted = false;
-    var platforms; 
+    var platforms;
     var cursors;
     var score = 0;
     var gameOver = false;
@@ -138,7 +138,6 @@ App.prototype.start = function () {
     }
 
     function buildGameState(userName, sessionId) {
-
         return {
             correctCount: 0,
             user: userName,
@@ -290,7 +289,6 @@ App.prototype.start = function () {
               if (vector === -1)  {
                 child.setVelocityX(-100);
                 child.anims.play('walkingDudeLeft', true);
-
               }
 
             //alert("Collision detected!");
@@ -307,10 +305,10 @@ App.prototype.start = function () {
       var initXY = npc.initCoord;
       //child.anims.play('marchingDude', true);
       if (npc.moveVector === -1) {
-        npc.anims.play('walkingDudeRight', true);
+        npc.anims.play('marchingDude', false);
         npc.moveVector = 1;
       } else if (npc.moveVector === 1) {
-        npc.anims.play('walkingDudeLeft', true);
+        npc.anims.play('marchingDude', false);
         npc.moveVector = -1;
       }
 
