@@ -26,7 +26,7 @@ App.prototype.start = function () {
     var language = '';
     var megaMAP;    var initMap;    var roomsMAP = [];
     var userInfo;    var userIUN;
-    var player;    var room;    var stars;
+    var player;    var room;    var stars; var npcGroup; var arrScenes =[];
     var theGameIsStarted = false;
     var platforms;
     var cursors;
@@ -133,12 +133,14 @@ App.prototype.start = function () {
         //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         //this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
         //docMUHC50x75L4U4D4R4
-        //this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
-        this.load.spritesheet('docOther', 'png/HSoloMan2_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
+        this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
+        this.load.spritesheet('HSoloMan', 'png/HSoloMan2_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
         this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
         //HSoloMan_SingleImg_Sprite
         this.load.spritesheet('HSoloSingleImg', 'png/HSoloMan_SingleImg_Sprite.png', {frameWidth: 64, frameHeight: 72});
-        this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v1.png', {frameWidth: 75, frameHeight: 72});
+        this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v1.png', {frameWidth: 75, frameHeight: 75});
+        //yellowDocOne.png
+        this.load.spritesheet('yellowDocOne', 'png/yellowDocOne.png', {frameWidth: 64, frameHeight: 72});
     }
 
     function buildGameState(userName, sessionId) {
@@ -309,10 +311,10 @@ App.prototype.start = function () {
       var initXY = npc.initCoord;
       //child.anims.play('marchingDude', true);
       if (npc.moveVector === -1) {
-        npc.anims.play('HSoloSingleImg', false);
+        npc.anims.play('yellowDocOne', false);
         npc.moveVector = 1;
       } else if (npc.moveVector === 1) {
-        npc.anims.play('HSoloSingleImg', false);
+        npc.anims.play('yellowDocOne', false);
         npc.moveVector = -1;
       }
 
@@ -694,8 +696,8 @@ App.prototype.start = function () {
                             repeat: -1
                         });
                         scene.anims.create({
-                            key: 'HSoloSingleImg',
-                            frames: scene.anims.generateFrameNumbers('HSoloSingleImg'),
+                            key: 'yellowDocOne',
+                            frames: scene.anims.generateFrameNumbers('yellowDocOne'),
                             frameRate: 1,
                             repeat: -1
                         });
@@ -714,7 +716,7 @@ App.prototype.start = function () {
                         // myDude.roomCoord.x = x;
                         // myDude.roomCoord.y = y;
                         console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
-                        myDude.anims.play('HSoloSingleImg', true);
+                        myDude.anims.play('yellowDocOne', true);
 
                         //console.log("question from key", myKey.question);
                         keyIndex++;
@@ -840,6 +842,90 @@ App.prototype.start = function () {
         newMapLocation.innerHTML = '<div class="divMinMapTD"> ' +
                                 '<img class="imgMapDude" src="./png/docOne.png" alt="}{" height="22" width="20">' +
                                 '</div>';
+    }
+
+
+    function buildStory(coordX, coordY) {
+      //a function to build a room animation logic
+      // passed parameters: coordX, coordY - these are for a room center coordinates
+      npcGroup = scene.physics.add.group({
+          immovable: true
+      });
+      arrScenes = [
+        {
+          sceneId: 0,
+          sceneName: 'unlockedComputer',
+          cCoordX : coordX,
+          cCoordY : coordY,
+          animNPCGroup : [
+            {
+              id: 0,
+              npcName: 'HSolo',
+              animList: [
+                {
+                  key: 'marchingDude',
+                  frames: { spriteName: 'docOther', start: 4, end: 7 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'walkingDudeLeft',
+                  frames: { spriteName: 'docOther', start: 0, end: 3 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'walkingDudeRight',
+                  frames: { spriteName: 'docOther', start: 12, end: 15 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'HSoloSingleImg',
+                  frames: { spriteName: 'HSoloSingleImg', start: 0, end: 0 },
+                  frameRate: 1,
+                  repeat: -1
+                }
+              ]
+            },
+            {
+              id: 1,
+              npcName: 'CompDesk',
+              animList: [
+                {
+                  key: 'compDeskOpen',
+                  frames: { spriteName: 'compDesk4x4', start: 0, end: 3 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'compDeskLock',
+                  frames: { spriteName: 'compDesk4x4', start: 4, end: 7 },
+                  frameRate: 5,
+                  repeat: -1
+                }
+              ]
+            }
+          ]
+        }
+      ];
+      //====================
+      // for (let i=0; i < animNPCGroup.length; i++) {
+      //   //animNPCGroup
+      //   var myObj = animNPCGroup[i];
+      //   var myDude = npcGroup.create(coord.x, coord.y, 'docOther').setScale(1); //doors keys (dude)
+      //   myDude.question = megaMAP.questionList[keyIndex];
+      //   myDude.id = keyIndex;
+      //   myDude.moveVector = 1;
+      //   myDude.roomCoord = { x: x, y: y};
+      //   myDude.initCoord = { x: coord.x, y: coord.y};
+      //   // myDude.roomCoord.x = x;
+      //   // myDude.roomCoord.y = y;
+      //   //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
+      //   myDude.anims.play('HSoloSingleImg', true);
+      // }
+
+
     }
 
 /////////questions functionality
@@ -1044,13 +1130,6 @@ App.prototype.start = function () {
         const vidPlayer = document.getElementById("divVidPlayer");
         vidPlayer.innerHTML = '<div class="embed-container"><iframe src="' + qVideoURL
             + '" width="600" height="480" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
-        //<style>.embed-container { position: relative; padding-bottom: 56.25%; height: 0;
-        //            overflow: hidden; max-width: 100%; height: auto; }
-        //            .embed-container iframe, .embed-container object,
-        //            .embed-container embed { position: absolute; top: 0;
-        //            left: 0; width: 100%; height: 100%; }</style><div class='embed-container'>
-        //            <iframe src='https://player.vimeo.com/video/11712103'
-        //            frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
 
         $("#closeVideo").unbind("click");
         $("#closeVideo").bind("click", onVideoCloseCallback);
