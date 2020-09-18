@@ -206,7 +206,8 @@ App.prototype.start = function () {
         //scoreImgs = this.physics.add.group();
         this.cameras.main.startFollow(player);
         this.physics.add.collider(player, walls);
-        this.physics.add.collider(doorkeys, walls, null, npcHitTheWall, this);
+        this.physics.add.collider(npcGroup, walls, null, npcHitTheWall, this);
+        this.physics.add.collider(npcGroup, npcGroup, null, npcHitOtherNpc, this);
         this.physics.add.collider(player, doors, null, hitTheDoor, this);
         this.physics.add.collider(player, hospitalBed, null, breakingBad, this);
         this.physics.add.overlap(player, doorkeys, collectKey, null, this);
@@ -284,41 +285,81 @@ App.prototype.start = function () {
         let thisY = player.y;
         let deltaX = Math.floor(thisX / 800);
         let deltaY = Math.floor(thisY / 520);
-        // player.mazeCoord = { mazeX: deltaX, mazeY: deltaY };
-        doorkeys.children.iterate(child => {
+        npcGroup.children.iterate(child => {
           if (child.roomCoord.x === deltaX && child.roomCoord.y === deltaY) {
-            var vector = child.moveVector;
-              if (vector === 1) {
-                child.setVelocityX(100);
-                child.anims.play('walkingDudeRight', true);
-              }
-              if (vector === -1)  {
-                child.setVelocityX(-100);
-                child.anims.play('walkingDudeLeft', true);
-              }
-
-            //alert("Collision detected!");
-            // console.log('--> dude state changes!');
+            if (child.isActive) {
+              var vector = child.moveVector;
+                if (vector === 1) {
+                  child.setVelocityX(100);
+                  child.anims.play('walkRight', true);
+                }
+                if (vector === -1)  {
+                  child.setVelocityX(-100);
+                  child.anims.play('walkLeft', true);
+                }
+            }
           }
-          // if (child && child.getBounds().contains(deltaX, deltaY)) {
-          //   child.destroy(child, true);
-          //   alert("Collision detected!");
-          // }
         })
+
+        // player.mazeCoord = { mazeX: deltaX, mazeY: deltaY };
+        // doorkeys.children.iterate(child => {
+        //   if (child.roomCoord.x === deltaX && child.roomCoord.y === deltaY) {
+        //     var vector = child.moveVector;
+        //       if (vector === 1) {
+        //         child.setVelocityX(100);
+        //         child.anims.play('walkingDudeRight', true);
+        //       }
+        //       if (vector === -1)  {
+        //         child.setVelocityX(-100);
+        //         child.anims.play('walkingDudeLeft', true);
+        //       }
+        //
+        //     //alert("Collision detected!");
+        //     // console.log('--> dude state changes!');
+        //   }
+        //   // if (child && child.getBounds().contains(deltaX, deltaY)) {
+        //   //   child.destroy(child, true);
+        //   //   alert("Collision detected!");
+        //   // }
+        // })
     };
 
     function npcHitTheWall(npc, wall) {
-      var initXY = npc.initCoord;
+      // var initXY = npc.initCoord;
+      // var npcX = npc.x;
+      // var npcY  = npc.y;
+      var defaultKey = npc.npcDefaultKey;
       //child.anims.play('marchingDude', true);
-      if (npc.moveVector === -1) {
-        npc.anims.play('yellowDocOne', false);
+      if (npc.moveVector === -1 && (npc.isActive) ) {
+        npc.anims.play(defaultKey, true);
+        npc.setVelocityX(0);
         npc.moveVector = 1;
-      } else if (npc.moveVector === 1) {
-        npc.anims.play('yellowDocOne', false);
+        npc.x += 5;
+      } else if (npc.moveVector === 1 && (npc.isActive)) {
+        npc.anims.play(defaultKey, true);
+        npc.setVelocityX(0);
         npc.moveVector = -1;
+        npc.x -= 5;
       }
         // npc.setX( initXY.x );
-
+    }
+    function npcHitOtherNpc(npc) {
+      // var initXY = npc.initCoord;
+      // var npcX = npc.x;
+      // var npcY  = npc.y;
+      var defaultKey = npc.npcDefaultKey;
+      //child.anims.play('marchingDude', true);
+      if (npc.moveVector === -1 && (npc.isActive)) {
+        npc.anims.play(defaultKey, true);
+        npc.setVelocityX(0);
+        npc.moveVector = 1;
+        npc.x += 15;
+      } else if (npc.moveVector === 1 && (npc.isActive)) {
+        npc.anims.play(defaultKey, true);
+        npc.setVelocityX(0);
+        npc.moveVector = -1;
+        npc.x -= 15;
+      }
     }
 
     function hitTheDoor(player, door) {
@@ -732,11 +773,7 @@ App.prototype.start = function () {
 
     function playSound(sound) {
       //sounds: //SOUND MUSIC STOPED To Debug IE11 issues
-      // if ( !isBrowserIE ) {
-      //     if (!sound.isPlaying) {
-      //         sound.play();
-      //     }
-      // }
+      // if ( !isBrowserIE ) { if (!sound.isPlaying) { sound.play();} }
       if ((!sound.isPlaying) && (!isSilent)) {
           sound.play();
       }
@@ -861,41 +898,15 @@ App.prototype.start = function () {
           animNPCGroup : [
             {
               id: 0,
-              npcName: 'HSoloSingleImg',
-                npcCoordX : (440),
-                npcCoordY : (800),
-              animList: [
-                {
-                  key: 'HSoloSingleImg',
-                  frames: { spriteName: 'HSoloSingleImg', start: 0, end: 0 },
-                  frameRate: 1,
-                  repeat: -1
-                },
-                {
-                  key: 'marchingHSolo',
-                  frames: { spriteName: 'HSoloMan', start: 4, end: 7 },
-                  frameRate: 5,
-                  repeat: -1
-                },
-                {
-                  key: 'walkingHSoloLeft',
-                  frames: { spriteName: 'HSoloMan', start: 0, end: 3 },
-                  frameRate: 5,
-                  repeat: -1
-                },
-                {
-                  key: 'walkingHSoloRight',
-                  frames: { spriteName: 'HSoloMan', start: 12, end: 15 },
-                  frameRate: 5,
-                  repeat: -1
-                }
-              ]
-            },
-            {
-              id: 1,
-              npcName: 'compDeskOpen',
-                npcCoordX : (380),
-                npcCoordY : (800),
+              isActive: false,
+              objType: 'DECORATION',
+              npcName: 'compDesk1',
+              defaultKey: 'compDeskOpen',
+                npcCoordX : (280),
+                npcCoordY : (720),
+              animPath: [
+                { pathX: 0, pathY: 0, velocityX: 0, velocityY: 0 }
+              ],
               animList: [
                 {
                   key: 'compDeskOpen',
@@ -910,13 +921,57 @@ App.prototype.start = function () {
                   repeat: -1
                 }
               ]
+            },
+            {
+              id: 1,
+              isActive: true,
+              objType: 'NPC',
+              npcName: 'HSoloSingleImg',
+              defaultKey: 'standFace',
+                npcCoordX : (440),
+                npcCoordY : (720),
+              animPath: [
+                { pathX: 200, pathY: 0, velocityX: 100, velocityY: 0 }
+              ],
+              animList: [
+                {
+                  key: 'standFace',
+                  frames: { spriteName: 'HSoloSingleImg', start: 0, end: 0 },
+                  frameRate: 1,
+                  repeat: -1
+                },
+                {
+                  key: 'walkUp',
+                  frames: { spriteName: 'HSoloMan', start: 4, end: 7 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'walkDown',
+                  frames: { spriteName: 'HSoloMan', start: 8, end: 11 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'walkLeft',
+                  frames: { spriteName: 'HSoloMan', start: 0, end: 3 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'walkRight',
+                  frames: { spriteName: 'HSoloMan', start: 12, end: 15 },
+                  frameRate: 5,
+                  repeat: -1
+                }
+              ]
             }
           ]
         }
       ];
       //====================
-      let deltaX = Math.floor(coordX * 400);
-      let deltaY = Math.floor(coordY * 260);
+      // let deltaX = Math.floor(coordX * 400);
+      // let deltaY = Math.floor(coordY * 260);
       //====================
       for (let k=0; k< arrScenes.length; k++) {
         // going over an array: arrScenes
@@ -926,35 +981,54 @@ App.prototype.start = function () {
         for (let i=0; i < sceneAnimGrp.length; i++) {
           //animNPCGroup
             var myObj = sceneAnimGrp[i];
-            var sceneNpcCoordX = myObj.npcCoordX;
-            var sceneNpcCoordY = myObj.npcCoordY;
+            var objActive = myObj.isActive;
+            var objType = myObj.objType;
+            var sceneCoordX = myObj.npcCoordX;
+            var sceneCoordY = myObj.npcCoordY;
             var npcName = myObj.npcName;
+            var npcDefaultKey = myObj.defaultKey;
           for (let m=0; m < myObj.animList.length; m++ ) {
+            //reading animation parameters:
               var animKey = myObj.animList[m].key;
               var animSprite = myObj.animList[m].frames.spriteName;
               var animStart = myObj.animList[m].frames.start;
               var animEnd = myObj.animList[m].frames.end;
               var animFrameRate = myObj.animList[m].frameRate;
               var animRepeat = myObj.animList[m].repeat;
-
+              //building animation resources:
               scene.anims.create({
                   key: animKey,
                   frames: scene.anims.generateFrameNumbers(animSprite, {start: animStart, end: animEnd}),
                   frameRate: animFrameRate,
                   repeat: animRepeat
               });
-              console.log("===> sceneAnimGrp animKey[",i,"]",animKey);
-              console.log("===> sceneAnimGrp animSprite[",i,"]",animSprite);
-              console.log("===> sceneAnimGrp animStart[",i,"]",animStart);
-              console.log("===> sceneAnimGrp animEnd[",i,"]",animEnd);
-              console.log("===> sceneAnimGrp animFrameRate[",i,"]",animFrameRate);
-              console.log("===> sceneAnimGrp animRepeat[",i,"]",animRepeat);
           }
             console.log("===> sceneAnimGrp animKey[",i,"]",animKey);
-            var myDude = npcGroup.create(sceneNpcCoordX, sceneNpcCoordY, npcName).setScale(1); //doors keys (dude)
-            myDude.anims.play(npcName, true);
+            // create an object and place it to the group:
+            if (objType === 'NPC') {
+              // use myObj.standFace to set standing posture:
+              var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcName).setScale(1); //doors keys (dude)
+              //activate default animation:
+              myDude.anims.play(npcDefaultKey, false);
+            } else if (objType === 'DECORATION') {
+              // use myObj.standFace to set standing posture:
+              var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcName).setScale(1); //doors keys (dude)
+              //activate default animation:
+              myDude.anims.play(npcDefaultKey, false);
+            } else {
+              //unknown type!
+              console.log("!!! Alert: Animation object type unknown!");
+            }
+            myDude.moveVector = 1;
+            myDude.isActive = objActive;
+            myDude.objType = objType;
+            myDude.npcDefaultKey = npcDefaultKey;
+            myDude.roomCoord = {
+              x: Math.floor(sceneCoordX / 800) ,
+              y: Math.floor(sceneCoordY / 520)
+            } ;
         }
-
+          //_this.physics.add.collider(npcGroup, sceneAnimGrp[1].npcName, null, npcHitTheWall, _this);
       }
 
     }
