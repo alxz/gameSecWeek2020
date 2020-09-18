@@ -489,6 +489,9 @@ App.prototype.start = function () {
         });
         walls = scene.physics.add.staticGroup();
         doorkeys = scene.physics.add.group();
+        npcGroup = scene.physics.add.group({
+            immovable: true
+        });
         hospitalBed = scene.physics.add.group({
             immovable: true
         });
@@ -727,6 +730,7 @@ App.prototype.start = function () {
           }
         }
         initPlayer(scene);
+        buildStory(1, 0, scene);
     }
 
     function playSound(sound) {
@@ -845,7 +849,7 @@ App.prototype.start = function () {
     }
 
 
-    function buildStory(coordX, coordY) {
+    function buildStory(coordX, coordY,scene) {
       //a function to build a room animation logic
       // passed parameters: coordX, coordY - these are for a room center coordinates
       npcGroup = scene.physics.add.group({
@@ -854,7 +858,7 @@ App.prototype.start = function () {
       arrScenes = [
         {
           sceneId: 0,
-          sceneName: 'unlockedComputer',
+          sceneName: 'lockYourComputer',
           cCoordX : coordX,
           cCoordY : coordY,
           animNPCGroup : [
@@ -863,27 +867,27 @@ App.prototype.start = function () {
               npcName: 'HSolo',
               animList: [
                 {
-                  key: 'marchingDude',
-                  frames: { spriteName: 'docOther', start: 4, end: 7 },
-                  frameRate: 5,
-                  repeat: -1
-                },
-                {
-                  key: 'walkingDudeLeft',
-                  frames: { spriteName: 'docOther', start: 0, end: 3 },
-                  frameRate: 5,
-                  repeat: -1
-                },
-                {
-                  key: 'walkingDudeRight',
-                  frames: { spriteName: 'docOther', start: 12, end: 15 },
-                  frameRate: 5,
-                  repeat: -1
-                },
-                {
                   key: 'HSoloSingleImg',
                   frames: { spriteName: 'HSoloSingleImg', start: 0, end: 0 },
                   frameRate: 1,
+                  repeat: -1
+                },
+                {
+                  key: 'marchingHSolo',
+                  frames: { spriteName: 'HSoloMan', start: 4, end: 7 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'walkingHSoloLeft',
+                  frames: { spriteName: 'HSoloMan', start: 0, end: 3 },
+                  frameRate: 5,
+                  repeat: -1
+                },
+                {
+                  key: 'walkingHSoloRight',
+                  frames: { spriteName: 'HSoloMan', start: 12, end: 15 },
+                  frameRate: 5,
                   repeat: -1
                 }
               ]
@@ -910,20 +914,53 @@ App.prototype.start = function () {
         }
       ];
       //====================
-      // for (let i=0; i < animNPCGroup.length; i++) {
-      //   //animNPCGroup
-      //   var myObj = animNPCGroup[i];
-      //   var myDude = npcGroup.create(coord.x, coord.y, 'docOther').setScale(1); //doors keys (dude)
-      //   myDude.question = megaMAP.questionList[keyIndex];
-      //   myDude.id = keyIndex;
-      //   myDude.moveVector = 1;
-      //   myDude.roomCoord = { x: x, y: y};
-      //   myDude.initCoord = { x: coord.x, y: coord.y};
-      //   // myDude.roomCoord.x = x;
-      //   // myDude.roomCoord.y = y;
-      //   //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
-      //   myDude.anims.play('HSoloSingleImg', true);
-      // }
+      // let thisX = player.x;
+      // let thisY = player.y;
+      // let deltaX = Math.floor(thisX / 800);
+      // let deltaY = Math.floor(thisY / 520);
+      let deltaX = Math.floor(coordX * 400);
+      let deltaY = Math.floor(coordY * 260);
+      //====================
+      for (let k=0; k< arrScenes.length; k++) {
+        // going over an array: arrScenes
+        var sceneAnimGrp = arrScenes[k].animNPCGroup;
+        console.log("===> arrScenes Objects[",k,"]",arrScenes[k]);
+
+        for (let i=0; i < sceneAnimGrp.length; i++) {
+          //animNPCGroup
+
+          var myObj = sceneAnimGrp[i];
+          var animSprite = myObj.animList[0].frames.spriteName;
+          var animStart = myObj.animList[0].frames.start;
+          var animEnd = myObj.animList[0].frames.end;
+          var animFrameRate = myObj.animList[0].frameRate;
+          var animRepeat = myObj.animList[0].repeat;
+
+          scene.anims.create({
+              key: myObj.animList[0].key,
+              frames: scene.anims.generateFrameNumbers(animSprite, {start: animStart, end: animEnd}),
+              frameRate: animFrameRate,
+              repeat: animRepeat
+          });
+          var myDude = npcGroup.create(coordX, coordY, animSprite).setScale(1); //doors keys (dude)
+          console.log("===> sceneAnimGrp animSprite[",i,"]",animSprite);
+          console.log("===> sceneAnimGrp animStart[",i,"]",animStart);
+          console.log("===> sceneAnimGrp animEnd[",i,"]",animEnd);
+          console.log("===> sceneAnimGrp animFrameRate[",i,"]",animFrameRate);
+          console.log("===> sceneAnimGrp animRepeat[",i,"]",animRepeat);
+
+          // myDude.question = megaMAP.questionList[keyIndex];
+          // myDude.id = keyIndex;
+          // myDude.moveVector = 1;
+          // myDude.roomCoord = { x: x, y: y};
+          // myDude.initCoord = { x: coord.x, y: coord.y};
+          // // myDude.roomCoord.x = x;
+          // // myDude.roomCoord.y = y;
+          // //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
+          myDude.anims.play(animSprite, true);
+        }
+      }
+
 
 
     }
