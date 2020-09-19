@@ -72,7 +72,9 @@
        </td><td style="width: 280px;">
          &nbsp; &nbsp;
          Timer: <span id="userTimer"></span> &nbsp;
-       </td><td>
+       </td><td id="testBox">
+             Test:
+        </td><td>
          <label for="silentCheckBox">Mute</label>
          <input type="checkbox" id="silentCheckBox" name="silentCheckBox" value="0" onchange="updateSilentCheckBox(this.value)">
         </td><td>&nbsp; &nbsp; &nbsp;

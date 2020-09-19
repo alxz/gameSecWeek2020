@@ -56,6 +56,7 @@ App.prototype.start = function () {
     const submitAnswerButton = document.getElementById("submitAnswerButton");
     const submitMsgContainer = document.getElementById("submitMsg");
     const isSilentCheckBox = document.getElementById("silentCheckBox");
+    const testBox = document.getElementById("testBox");
 
     var tryUserIUN = document.getElementById("userIUNBox");
     if (tryUserIUN != null) {
@@ -300,31 +301,51 @@ App.prototype.start = function () {
             if (child.isActive === true) {
               //show on-screen text:
               var animIndex = child.animTextIndex;
-              var timeoutTxt = child.animText[animIndex].txtTimeToShow * 1000;
-              if (timeoutTxt > 0 && (animIndex < child.animTextMaxIndex)) {
+              if (animIndex <= child.animTextMaxIndex) {
+                  var timeoutTxt = child.animText[animIndex].txtTimeToShow * 1000;
+                  if (timeoutTxt > 0 ) {
 
-                var vectorX = child.animText[animIndex].moveVectorX;
-                  if (vectorX === 1 && child.x < child.animText[animIndex].posX.maxX) {
-                    child.setVelocityX(100);
-                    child.anims.play('walkRight', true);
-                  } else if (vectorX === -1 && child.x > child.animText[animIndex].posX.minX)  {
-                    child.setVelocityX(-100);
-                    child.anims.play('walkLeft', true);
+                      var vectorX = child.animText[animIndex].moveVectorX;
+                      //$('#testBox span').text(vectorX);
+                      testBox.innerHTML = vectorX;
+                      if (vectorX == 1 ) {
+                          if (child.x < child.animText[animIndex].posX.maxX) {
+                              child.setVelocityX(100);
+                              child.anims.play('walkRight', true);
+                          } else {
+                              child.setVelocityX(0);
+                              child.anims.play('standFace', true);
+                          }
+                      }
+                      if (vectorX == -1)  {
+                          if (child.x > child.animText[animIndex].posX.minX) {
+                              child.setVelocityX(-100);
+                              child.anims.play('walkLeft', true);
+                          } else {
+                              child.setVelocityX(0);
+                              child.anims.play('standFace', true);
+                          }
+                      }
+                      if (vectorX == 0) {
+                          child.setVelocityX(0);
+                          child.anims.play('standFace', true);
+                      }
+
+                      sceneText.setText(child.animText[animIndex].txtStr);
+                      sceneText.x = player.x - 380;
+                      sceneText.y = player.y + 200;
+                      setTimeout(myFunction => {
+                          child.animText[animIndex].txtTimeToShow = 0;
+                          //txtTimeToShow
+                          //if (animIndex < child.animTextMaxIndex) {
+                          child.animTextIndex = animIndex + 1;
+                          //console.log("child.animTextIndex: ", child.animTextIndex); //animTextMaxIndex
+                          sceneText.setText("");
+                          //}
+                      }, timeoutTxt);
                   }
-
-                sceneText.setText(child.animText[animIndex].txtStr);
-                sceneText.x = player.x - 400;
-                sceneText.y = player.y + 200;
-                setTimeout(myFunction => {
-                  child.animText[animIndex].txtTimeToShow = 0;
-                  //txtTimeToShow
-                  //if (animIndex < child.animTextMaxIndex) {
-                    child.animTextIndex = animIndex + 1;
-                    //console.log("child.animTextIndex: ", child.animTextIndex); //animTextMaxIndex
-                    sceneText.setText("");
-                  //}
-                }, timeoutTxt);
               }
+
               // var timeoutTxt2 = child.animText[1].txtTimeToShow * 1000;
               // if (timeoutTxt == 0 && timeoutTxt2 > 0) {
               //   sceneText.setText(child.animText[1].txtStr);
@@ -992,7 +1013,7 @@ App.prototype.start = function () {
               txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
               txtTimeToShow: 10,
               moveVectorX: -1,
-              posX: { minX: 290, maxX: 480 },
+              posX: { minX: 310, maxX: 500 },
               posY: { minY: 440, maxY: 440 }
             },
             {
@@ -1001,7 +1022,7 @@ App.prototype.start = function () {
               txtStr: ' Computer: Please enter your user name and password!',
               txtTimeToShow: 10,
               moveVectorX: 0,
-              posX: { minX: 290, maxX: 480 },
+              posX: { minX: 310, maxX: 500 },
               posY: { minY: 440, maxY: 440 }
             },
             {
@@ -1010,7 +1031,7 @@ App.prototype.start = function () {
               txtStr: 'Computer: Patients records access allowed!',
               txtTimeToShow: 10,
               moveVectorX: 0,
-              posX: { minX: 290, maxX: 480 },
+              posX: { minX: 310, maxX: 500 },
               posY: { minY: 440, maxY: 440 }
             },
             {
@@ -1019,7 +1040,7 @@ App.prototype.start = function () {
               txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
               txtTimeToShow: 10,
               moveVectorX: 1,
-              posX: { minX: 290, maxX: 480 },
+              posX: { minX: 310, maxX: 500 },
               posY: { minY: 440, maxY: 440 }
             }
           ],
