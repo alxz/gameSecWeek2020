@@ -32,6 +32,7 @@ App.prototype.start = function () {
     var score ;
     var gameOver = false;
     var scoreText;    var scoreTextShade;    var scoreTextShade0;  var playPosText;
+    var sceneText; //to show the text for a scene
     var isPause = false;
     var keyIndex = 0;
     var mapLocContent;
@@ -43,6 +44,7 @@ App.prototype.start = function () {
     var hospitalBed;
     var totalQestionsAnswered = 0;    var totalQestionsAsked = 0;    var listofquestions = "";
     var doorsHolder = [];
+    var sceneTxtHolder = [];
     var music;    var doorOpen;    var soundStep;    var pickupKey;    var soundOk;
     var soundFail;    var soundFinal;    var gameState;    var isSurveySent = false;    var langLabel = '';
 
@@ -199,6 +201,14 @@ App.prototype.start = function () {
             /* backgroundColor: '#479B85',*/
             shadow: "offsetX = 5, offsetY = 5, fill= true"
           });
+          //sceneText
+          sceneText = this.add.text(10, 450, 'Text:',
+            {
+              fontSize: '18px',
+              fill: '#FDFC00',
+              backgroundColor: '#479B85',
+              shadow: "offsetX = 15, offsetY = 15, fill= true"
+            });
 
           divScoreText.style = "scoreText-container";
           divScoreText.innerHTML = "You have keys: <br><hr/><br>";
@@ -287,16 +297,45 @@ App.prototype.start = function () {
         let deltaY = Math.floor(thisY / 520);
         npcGroup.children.iterate(child => {
           if (child.roomCoord.x === deltaX && child.roomCoord.y === deltaY) {
-            if (child.isActive) {
-              var vector = child.moveVector;
-                if (vector === 1) {
-                  child.setVelocityX(100);
-                  child.anims.play('walkRight', true);
-                }
-                if (vector === -1)  {
-                  child.setVelocityX(-100);
-                  child.anims.play('walkLeft', true);
-                }
+            if (child.isActive === true) {
+              //show on-screen text:
+              var animIndex = child.animTextIndex;
+              var timeoutTxt = child.animText[animIndex].txtTimeToShow * 1000;
+              if (timeoutTxt > 0 && (animIndex < child.animTextMaxIndex)) {
+
+                var vectorX = child.animText[animIndex].moveVectorX;
+                  if (vectorX === 1 && child.x < child.animText[animIndex].posX.maxX) {
+                    child.setVelocityX(100);
+                    child.anims.play('walkRight', true);
+                  } else if (vectorX === -1 && child.x > child.animText[animIndex].posX.minX)  {
+                    child.setVelocityX(-100);
+                    child.anims.play('walkLeft', true);
+                  }
+
+                sceneText.setText(child.animText[animIndex].txtStr);
+                sceneText.x = player.x - 400;
+                sceneText.y = player.y + 200;
+                setTimeout(myFunction => {
+                  child.animText[animIndex].txtTimeToShow = 0;
+                  //txtTimeToShow
+                  //if (animIndex < child.animTextMaxIndex) {
+                    child.animTextIndex = animIndex + 1;
+                    //console.log("child.animTextIndex: ", child.animTextIndex); //animTextMaxIndex
+                    sceneText.setText("");
+                  //}
+                }, timeoutTxt);
+              }
+              // var timeoutTxt2 = child.animText[1].txtTimeToShow * 1000;
+              // if (timeoutTxt == 0 && timeoutTxt2 > 0) {
+              //   sceneText.setText(child.animText[1].txtStr);
+              //   sceneText.x = player.x - 430;
+              //   sceneText.y = player.y + 200;
+              //   setTimeout(myFunction => {
+              //     child.animText[1].txtTimeToShow = 0;
+              //     sceneText.setText("");
+              //   }, timeoutTxt2);
+              // }
+              //analyze NPC movements:
             }
           }
         })
@@ -349,6 +388,7 @@ App.prototype.start = function () {
       // var npcY  = npc.y;
       var defaultKey = npc.npcDefaultKey;
       //child.anims.play('marchingDude', true);
+      /*
       if (npc.moveVector === -1 && (npc.isActive)) {
         npc.anims.play(defaultKey, true);
         npc.setVelocityX(0);
@@ -360,6 +400,7 @@ App.prototype.start = function () {
         npc.moveVector = -1;
         npc.x -= 15;
       }
+      */
     }
 
     function hitTheDoor(player, door) {
@@ -429,14 +470,7 @@ App.prototype.start = function () {
         } catch (e) {
           console.log('Error! Can\'t start a timer!',e.toString());
         }
-        stopNPC(key);
         if (isPause) return;
-        // if (theGameIsStarted === false) {
-        //   //if the game has started then change the boolean flag:
-        //   theGameIsStarted = true;
-        //   userTimer.start();
-        //   console.log("theGameIsStarted: " + theGameIsStarted);
-        // }
         playSound(pickupKey);
         stopPlayer();
         isPause = true;
@@ -445,10 +479,6 @@ App.prototype.start = function () {
             //submitAnswerButton.style.display = 'none';
             playSound(soundOk);
             key.disableBody(true, true); // this is to remove the key(object) from the scene
-            // keyPlayerOverlap
-            // var platformCollider = this.physics.add.collider(object,object);
-            // this.physics.world.removeCollider(platformCollider);
-            //this.physics.world.removeCollider(keyPlayerOverlap);
 
             isPause = false;
             player.doorKeys++;
@@ -508,15 +538,6 @@ App.prototype.start = function () {
         player.anims.play('turn');
         //if (!isBrowserIE) {
          soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
-       //}
-    }
-
-    function stopNPC(npcObj) {
-        npcObj.setVelocityX(0);
-        npcObj.setVelocityY(0);
-        npcObj.anims.play('marchingDude');
-        //if (!isBrowserIE) {
-        // soundStep.pause(); //SOUND MUSIC STOPED To Debug IE11 issues
        //}
     }
 
@@ -742,9 +763,6 @@ App.prototype.start = function () {
                             frameRate: 1,
                             repeat: -1
                         });
-
-
-
                         // var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
                         // myKey.question = megaMAP.questionList[keyIndex];
                         // myKey.anims.play('rotatingKey', true);
@@ -966,7 +984,47 @@ App.prototype.start = function () {
                 }
               ]
             }
-          ]
+          ],
+          animText: [
+            {
+              id: 0,
+              txtLabel: 'EmplSpeech',
+              txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
+              txtTimeToShow: 10,
+              moveVectorX: -1,
+              posX: { minX: 290, maxX: 480 },
+              posY: { minY: 440, maxY: 440 }
+            },
+            {
+              id: 1,
+              txtLabel: 'EmplSpeech',
+              txtStr: ' Computer: Please enter your user name and password!',
+              txtTimeToShow: 10,
+              moveVectorX: 0,
+              posX: { minX: 290, maxX: 480 },
+              posY: { minY: 440, maxY: 440 }
+            },
+            {
+              id: 2,
+              txtLabel: 'CompScreenMsg1',
+              txtStr: 'Computer: Patients records access allowed!',
+              txtTimeToShow: 10,
+              moveVectorX: 0,
+              posX: { minX: 290, maxX: 480 },
+              posY: { minY: 440, maxY: 440 }
+            },
+            {
+              id: 3,
+              txtLabel: 'CompScreenMsg',
+              txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
+              txtTimeToShow: 10,
+              moveVectorX: 1,
+              posX: { minX: 290, maxX: 480 },
+              posY: { minY: 440, maxY: 440 }
+            }
+          ],
+          animTextIndex: 0,
+          animTextMaxIndex: 3
         }
       ];
       //====================
@@ -977,6 +1035,7 @@ App.prototype.start = function () {
         // going over an array: arrScenes
         var sceneAnimGrp = arrScenes[k].animNPCGroup;
         console.log("===> arrScenes Objects[",k,"]",arrScenes[k]);
+        sceneTxtHolder.push(arrScenes[k].animText);
 
         for (let i=0; i < sceneAnimGrp.length; i++) {
           //animNPCGroup
@@ -1019,7 +1078,7 @@ App.prototype.start = function () {
               //unknown type!
               console.log("!!! Alert: Animation object type unknown!");
             }
-            myDude.moveVector = 1;
+            myDude.moveVector = -1;
             myDude.isActive = objActive;
             myDude.objType = objType;
             myDude.npcDefaultKey = npcDefaultKey;
@@ -1027,10 +1086,15 @@ App.prototype.start = function () {
               x: Math.floor(sceneCoordX / 800) ,
               y: Math.floor(sceneCoordY / 520)
             } ;
-        }
-          //_this.physics.add.collider(npcGroup, sceneAnimGrp[1].npcName, null, npcHitTheWall, _this);
-      }
+            if (myDude.isActive) {
+              myDude.animText = arrScenes[k].animText;
+              myDude.animTextIndex = arrScenes[k].animTextIndex;
+              myDude.animTextMaxIndex = arrScenes[k].animTextMaxIndex;
+              console.log("myDude.animTextIndex: ", myDude.animTextIndex, " myDude.animTextMaxIndex: ", myDude.animTextMaxIndex  );
+            }
 
+        }
+      }
     }
 
 /////////questions functionality
