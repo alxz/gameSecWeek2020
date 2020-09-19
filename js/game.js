@@ -1,6 +1,6 @@
 var App = function () {
 };
-// by Alexey Zapromyotov (c) 2019
+// by Alexey Zapromyotov (c) 2019-2020
 var customIUN="";
 var isSilent = false;
 App.prototype.start = function () {
@@ -978,8 +978,8 @@ App.prototype.start = function () {
               id: 1,
               isActive: true,
               objType: 'NPC',
-              npcName: 'HSoloNPC',
-              defaultKey: 'HSoloStandUp',
+              npcName: 'HSoloStandUp',
+              defaultKey: 'standFace',
                 npcCoordX : (440),
                 npcCoordY : (720),
               animPath: [
