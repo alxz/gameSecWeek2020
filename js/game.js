@@ -136,7 +136,7 @@ App.prototype.start = function () {
         //this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
         //docMUHC50x75L4U4D4R4
         this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
-        this.load.spritesheet('HSoloMan', 'png/HSoloMan2_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
+        this.load.spritesheet('HSoloMan', 'png/HSoloMan1_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
         this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
 
         this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v1.png', {frameWidth: 75, frameHeight: 75});
@@ -144,6 +144,8 @@ App.prototype.start = function () {
         this.load.spritesheet('yellowDocOne', 'png/yellowDocOne.png', {frameWidth: 64, frameHeight: 72});
         //HSoloMan_SingleImg_Sprite
         this.load.spritesheet('HSoloSingleImg', 'png/HSoloMan_SingleImg_Sprite.png', {frameWidth: 64, frameHeight: 72});
+        this.load.spritesheet('HSoloStandUp', 'png/HSoloMan_StandUp_Sprite.png', {frameWidth: 50, frameHeight: 75});
+
     }
 
     function buildGameState(userName, sessionId) {
@@ -314,7 +316,7 @@ App.prototype.start = function () {
                               child.anims.play('walkRight', true);
                           } else {
                               child.setVelocityX(0);
-                              child.anims.play('standFace', true);
+                              child.anims.play(child.npcDefaultKey, true);
                           }
                       }
                       if (vectorX == -1)  {
@@ -323,12 +325,12 @@ App.prototype.start = function () {
                               child.anims.play('walkLeft', true);
                           } else {
                               child.setVelocityX(0);
-                              child.anims.play('standFace', true);
+                              child.anims.play(child.npcDefaultKey, true);
                           }
                       }
                       if (vectorX == 0) {
                           child.setVelocityX(0);
-                          child.anims.play('standFace', true);
+                          child.anims.play(child.npcDefaultKey, true);
                       }
 
                       sceneText.setText(child.animText[animIndex].txtStr);
@@ -407,7 +409,7 @@ App.prototype.start = function () {
       // var initXY = npc.initCoord;
       // var npcX = npc.x;
       // var npcY  = npc.y;
-      var defaultKey = npc.npcDefaultKey;
+      //var defaultKey = npc.npcDefaultKey;
       //child.anims.play('marchingDude', true);
       /*
       if (npc.moveVector === -1 && (npc.isActive)) {
@@ -921,6 +923,17 @@ App.prototype.start = function () {
                                 '</div>';
     }
 
+    /*
+    this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
+    this.load.spritesheet('HSoloMan', 'png/HSoloMan1_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
+    this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
+
+    this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v1.png', {frameWidth: 75, frameHeight: 75});
+    this.load.spritesheet('yellowDocOne', 'png/yellowDocOne.png', {frameWidth: 64, frameHeight: 72});
+
+    this.load.spritesheet('HSoloSingleImg', 'png/HSoloMan_SingleImg_Sprite.png', {frameWidth: 64, frameHeight: 72});
+    this.load.spritesheet('HSoloStandUp', 'png/HSoloMan_SingleImg_Sprite.png', {frameWidth: 50, frameHeight: 75});
+    */
 
     function buildStory(coordX, coordY,scene) {
       //a function to build a room animation logic
@@ -965,8 +978,8 @@ App.prototype.start = function () {
               id: 1,
               isActive: true,
               objType: 'NPC',
-              npcName: 'HSoloSingleImg',
-              defaultKey: 'standFace',
+              npcName: 'HSoloNPC',
+              defaultKey: 'HSoloStandUp',
                 npcCoordX : (440),
                 npcCoordY : (720),
               animPath: [
@@ -975,7 +988,7 @@ App.prototype.start = function () {
               animList: [
                 {
                   key: 'standFace',
-                  frames: { spriteName: 'HSoloSingleImg', start: 0, end: 0 },
+                  frames: { spriteName: 'HSoloStandUp', start: 0, end: 0 },
                   frameRate: 1,
                   repeat: -1
                 },
@@ -1011,7 +1024,7 @@ App.prototype.start = function () {
               id: 0,
               txtLabel: 'EmplSpeech',
               txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
-              txtTimeToShow: 10,
+              txtTimeToShow: 5,
               moveVectorX: -1,
               posX: { minX: 310, maxX: 500 },
               posY: { minY: 440, maxY: 440 }
@@ -1020,7 +1033,7 @@ App.prototype.start = function () {
               id: 1,
               txtLabel: 'EmplSpeech',
               txtStr: ' Computer: Please enter your user name and password!',
-              txtTimeToShow: 10,
+              txtTimeToShow: 5,
               moveVectorX: 0,
               posX: { minX: 310, maxX: 500 },
               posY: { minY: 440, maxY: 440 }
@@ -1029,7 +1042,7 @@ App.prototype.start = function () {
               id: 2,
               txtLabel: 'CompScreenMsg1',
               txtStr: 'Computer: Patients records access allowed!',
-              txtTimeToShow: 10,
+              txtTimeToShow: 5,
               moveVectorX: 0,
               posX: { minX: 310, maxX: 500 },
               posY: { minY: 440, maxY: 440 }
@@ -1038,7 +1051,7 @@ App.prototype.start = function () {
               id: 3,
               txtLabel: 'CompScreenMsg',
               txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
-              txtTimeToShow: 10,
+              txtTimeToShow: 5,
               moveVectorX: 1,
               posX: { minX: 310, maxX: 500 },
               posY: { minY: 440, maxY: 440 }
@@ -1087,12 +1100,12 @@ App.prototype.start = function () {
             // create an object and place it to the group:
             if (objType === 'NPC') {
               // use myObj.standFace to set standing posture:
-              var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcName).setScale(1); //doors keys (dude)
+              var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcDefaultKey).setScale(1); //doors keys (dude)
               //activate default animation:
               myDude.anims.play(npcDefaultKey, false);
             } else if (objType === 'DECORATION') {
               // use myObj.standFace to set standing posture:
-              var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcName).setScale(1); //doors keys (dude)
+              var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcDefaultKey).setScale(1); //doors keys (dude)
               //activate default animation:
               myDude.anims.play(npcDefaultKey, false);
             } else {
