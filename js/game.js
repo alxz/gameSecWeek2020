@@ -300,7 +300,8 @@ App.prototype.start = function () {
         let deltaY = Math.floor(thisY / 520);
         npcGroup.children.iterate(child => {
           if (child.roomCoord.x === deltaX && child.roomCoord.y === deltaY) {
-            if (child.isActive === true) {
+
+            if (child.isActive === true && child.npcId === 1) {
               //show on-screen text:
               var animIndex = child.animTextIndex;
               if (animIndex <= child.animTextMaxIndex) {
@@ -726,8 +727,9 @@ App.prototype.start = function () {
                 //doorkeys
                 var arrKeys = [];
                 var getKeyCordinateWithProximity = function (keys, minProximity) {
-                    //console.log('keys',keys);
-                    var c1 = {x: 400 + indX + randomPlsOrMin(50, 80), y: 260 + indY + randomPlsOrMin(50, 30)};
+                    //To generate a random keys location:
+                    // var c1 = {x: 400 + indX + randomPlsOrMin(50, 80), y: 260 + indY + randomPlsOrMin(50, 30)};
+                    var c1 = {x: 400 + indX + randomPlsOrMin(20, 60), y: 260 + indY + randomPlsOrMin(20, 50)};
                     var check = 0;
                     for (var i = 0; i < keys.length; i++) {
                         var c0 = keys[i];
@@ -756,36 +758,36 @@ App.prototype.start = function () {
                         //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
                         //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
                         // 'green-key-sprite', {start: 0, end: 18} -vs- 'gold-key-sprite', {start: 0, end: 6}
-                        // scene.anims.create({
-                        //     key: 'rotatingKey',
-                        //     frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
-                        //     frameRate: 10,
-                        //     repeat: -1
-                        // });
                         scene.anims.create({
-                            key: 'marchingDude',
-                            frames: scene.anims.generateFrameNumbers('docOther', {start: 4, end: 7}),
-                            frameRate: 5,
+                            key: 'rotatingKey',
+                            frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
+                            frameRate: 10,
                             repeat: -1
                         });
-                        scene.anims.create({
-                            key: 'walkingDudeLeft',
-                            frames: scene.anims.generateFrameNumbers('docOther', {start: 0, end: 3}),
-                            frameRate: 5,
-                            repeat: -1
-                        });
-                        scene.anims.create({
-                            key: 'walkingDudeRight',
-                            frames: scene.anims.generateFrameNumbers('docOther', {start: 12, end: 15}),
-                            frameRate: 5,
-                            repeat: -1
-                        });
-                        scene.anims.create({
-                            key: 'yellowDocOne',
-                            frames: scene.anims.generateFrameNumbers('yellowDocOne'),
-                            frameRate: 1,
-                            repeat: -1
-                        });
+                                // scene.anims.create({
+                                //     key: 'marchingDude',
+                                //     frames: scene.anims.generateFrameNumbers('docOther', {start: 4, end: 7}),
+                                //     frameRate: 5,
+                                //     repeat: -1
+                                // });
+                                // scene.anims.create({
+                                //     key: 'walkingDudeLeft',
+                                //     frames: scene.anims.generateFrameNumbers('docOther', {start: 0, end: 3}),
+                                //     frameRate: 5,
+                                //     repeat: -1
+                                // });
+                                // scene.anims.create({
+                                //     key: 'walkingDudeRight',
+                                //     frames: scene.anims.generateFrameNumbers('docOther', {start: 12, end: 15}),
+                                //     frameRate: 5,
+                                //     repeat: -1
+                                // });
+                                // scene.anims.create({
+                                //     key: 'yellowDocOne',
+                                //     frames: scene.anims.generateFrameNumbers('yellowDocOne'),
+                                //     frameRate: 1,
+                                //     repeat: -1
+                                // });
                         // var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
                         // myKey.question = megaMAP.questionList[keyIndex];
                         // myKey.anims.play('rotatingKey', true);
@@ -797,8 +799,8 @@ App.prototype.start = function () {
                         myDude.initCoord = { x: coord.x, y: coord.y};
                         // myDude.roomCoord.x = x;
                         // myDude.roomCoord.y = y;
-                        console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
-                        myDude.anims.play('yellowDocOne', true);
+                        //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
+                        myDude.anims.play('rotatingKey', true);
 
                         //console.log("question from key", myKey.question);
                         keyIndex++;
@@ -923,18 +925,6 @@ App.prototype.start = function () {
                                 '</div>';
     }
 
-    /*
-    this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
-    this.load.spritesheet('HSoloMan', 'png/HSoloMan1_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
-    this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
-
-    this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v1.png', {frameWidth: 75, frameHeight: 75});
-    this.load.spritesheet('yellowDocOne', 'png/yellowDocOne.png', {frameWidth: 64, frameHeight: 72});
-
-    this.load.spritesheet('HSoloSingleImg', 'png/HSoloMan_SingleImg_Sprite.png', {frameWidth: 64, frameHeight: 72});
-    this.load.spritesheet('HSoloStandUp', 'png/HSoloMan_SingleImg_Sprite.png', {frameWidth: 50, frameHeight: 75});
-    */
-
     function buildStory(coordX, coordY,scene) {
       //a function to build a room animation logic
       // passed parameters: coordX, coordY - these are for a room center coordinates
@@ -978,7 +968,7 @@ App.prototype.start = function () {
               id: 1,
               isActive: true,
               objType: 'NPC',
-              npcName: 'HSoloStandUp',
+              npcName: 'YellowDoc',
               defaultKey: 'standFace',
                 npcCoordX : (440),
                 npcCoordY : (720),
@@ -988,40 +978,86 @@ App.prototype.start = function () {
               animList: [
                 {
                   key: 'standFace',
-                  frames: { spriteName: 'HSoloStandUp', start: 0, end: 0 },
+                  frames: { spriteName: 'yellowDocOne', start: 0, end: 0 },
                   frameRate: 1,
                   repeat: -1
                 },
                 {
                   key: 'walkUp',
-                  frames: { spriteName: 'HSoloMan', start: 4, end: 7 },
+                  frames: { spriteName: 'docOther', start: 4, end: 7 },
                   frameRate: 5,
                   repeat: -1
                 },
                 {
                   key: 'walkDown',
-                  frames: { spriteName: 'HSoloMan', start: 8, end: 11 },
+                  frames: { spriteName: 'docOther', start: 8, end: 11 },
                   frameRate: 5,
                   repeat: -1
                 },
                 {
                   key: 'walkLeft',
-                  frames: { spriteName: 'HSoloMan', start: 0, end: 3 },
+                  frames: { spriteName: 'docOther', start: 0, end: 3 },
                   frameRate: 5,
                   repeat: -1
                 },
                 {
                   key: 'walkRight',
-                  frames: { spriteName: 'HSoloMan', start: 12, end: 15 },
+                  frames: { spriteName: 'docOther', start: 12, end: 15 },
                   frameRate: 5,
                   repeat: -1
                 }
               ]
-            }
+            },
+              {
+                  id: 2,
+                  isActive: true,
+                  objType: 'NPC',
+                  npcName: 'Joker',
+                  defaultKey: 'HSoloStandUp',
+                  npcCoordX : (320),
+                  npcCoordY : (880),
+                  animPath: [
+                      { pathX: 200, pathY: 0, velocityX: 100, velocityY: 0 }
+                  ],
+                  animList: [
+                      {
+                          key: 'HSoloStandUp',
+                          frames: { spriteName: 'HSoloStandUp', start: 0, end: 0 },
+                          frameRate: 1,
+                          repeat: -1
+                      },
+                      {
+                          key: 'walkUp',
+                          frames: { spriteName: 'HSoloMan', start: 4, end: 7 },
+                          frameRate: 5,
+                          repeat: -1
+                      },
+                      {
+                          key: 'walkDown',
+                          frames: { spriteName: 'HSoloMan', start: 8, end: 11 },
+                          frameRate: 5,
+                          repeat: -1
+                      },
+                      {
+                          key: 'walkLeft',
+                          frames: { spriteName: 'HSoloMan', start: 0, end: 3 },
+                          frameRate: 5,
+                          repeat: -1
+                      },
+                      {
+                          key: 'walkRight',
+                          frames: { spriteName: 'HSoloMan', start: 12, end: 15 },
+                          frameRate: 5,
+                          repeat: -1
+                      }
+                  ]
+              }
           ],
           animText: [
             {
               id: 0,
+              npcId: 1,
+              npcName: 'YellowDoc',
               txtLabel: 'EmplSpeech',
               txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
               txtTimeToShow: 5,
@@ -1031,6 +1067,8 @@ App.prototype.start = function () {
             },
             {
               id: 1,
+              npcId: 1,
+              npcName: 'YellowDoc',
               txtLabel: 'EmplSpeech',
               txtStr: ' Computer: Please enter your user name and password!',
               txtTimeToShow: 5,
@@ -1040,6 +1078,8 @@ App.prototype.start = function () {
             },
             {
               id: 2,
+              npcId: 1,
+              npcName: 'YellowDoc',
               txtLabel: 'CompScreenMsg1',
               txtStr: 'Computer: Patients records access allowed!',
               txtTimeToShow: 5,
@@ -1049,13 +1089,48 @@ App.prototype.start = function () {
             },
             {
               id: 3,
+              npcId: 1,
+              npcName: 'YellowDoc',
               txtLabel: 'CompScreenMsg',
               txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
               txtTimeToShow: 5,
               moveVectorX: 1,
-              posX: { minX: 310, maxX: 500 },
+              posX: { minX: 310, maxX: 600 },
               posY: { minY: 440, maxY: 440 }
-            }
+            },
+              {
+                  id: 4,
+                  npcId: 2,
+                  npcName: 'Joker',
+                  txtLabel: 'JokerMsg',
+                  txtStr: ' Hacker: Yes, I see something interesting \r\n   Gonna take a look now...',
+                  txtTimeToShow: 5,
+                  moveVectorX: -1,
+                  posX: { minX: 320, maxX: 320 },
+                  posY: { minY: 720, maxY: 880 }
+              },
+              {
+                  id: 5,
+                  npcId: 2,
+                  npcName: 'Joker',
+                  txtLabel: 'JokerMsg',
+                  txtStr: ' Hacker: Oh, great, let me try! \r\n   A piece of cake!',
+                  txtTimeToShow: 5,
+                  moveVectorX: 0,
+                  posX: { minX: 320, maxX: 320 },
+                  posY: { minY: 720, maxY: 880 }
+              },
+              {
+                  id: 6,
+                  npcId: 2,
+                  npcName: 'Joker',
+                  txtLabel: 'JokerMsg',
+                  txtStr: ' Hacker: Its time to leave... \r\n   Buy-bye my friends!',
+                  txtTimeToShow: 5,
+                  moveVectorX: 1,
+                  posX: { minX: 320, maxX: 320 },
+                  posY: { minY: 720, maxY: 880 }
+              }
           ],
           animTextIndex: 0,
           animTextMaxIndex: 3
@@ -1070,16 +1145,19 @@ App.prototype.start = function () {
         var sceneAnimGrp = arrScenes[k].animNPCGroup;
         console.log("===> arrScenes Objects[",k,"]",arrScenes[k]);
         sceneTxtHolder.push(arrScenes[k].animText);
-
+        // ************ ========== animNPCGroup start: ============ ************
         for (let i=0; i < sceneAnimGrp.length; i++) {
-          //animNPCGroup
+          //animNPCGroup - we loop over the group of sprites:
             var myObj = sceneAnimGrp[i];
+            var npcId = myObj.id;
+            var npcName = myObj.npcName;
             var objActive = myObj.isActive;
             var objType = myObj.objType;
             var sceneCoordX = myObj.npcCoordX;
             var sceneCoordY = myObj.npcCoordY;
-            var npcName = myObj.npcName;
             var npcDefaultKey = myObj.defaultKey;
+            console.log("===> npcName (sceneAnimGrp[",i,"])",npcName);
+            console.log("===> npcId (sceneAnimGrp[",i,"])",npcId);
           for (let m=0; m < myObj.animList.length; m++ ) {
             //reading animation parameters:
               var animKey = myObj.animList[m].key;
@@ -1101,6 +1179,8 @@ App.prototype.start = function () {
             if (objType === 'NPC') {
               // use myObj.standFace to set standing posture:
               var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcDefaultKey).setScale(1); //doors keys (dude)
+                myDude.npcDefaultKey = npcDefaultKey;
+                console.log("myDude.npcDefaultKey: ", myDude.npcDefaultKey );
               //activate default animation:
               myDude.anims.play(npcDefaultKey, false);
             } else if (objType === 'DECORATION') {
@@ -1112,6 +1192,8 @@ App.prototype.start = function () {
               //unknown type!
               console.log("!!! Alert: Animation object type unknown!");
             }
+            myDude.npcName = npcName;
+            myDude.npcId = npcId;
             myDude.moveVector = -1;
             myDude.isActive = objActive;
             myDude.objType = objType;
@@ -1124,10 +1206,12 @@ App.prototype.start = function () {
               myDude.animText = arrScenes[k].animText;
               myDude.animTextIndex = arrScenes[k].animTextIndex;
               myDude.animTextMaxIndex = arrScenes[k].animTextMaxIndex;
+              console.log("myDude.npcId: ", myDude.npcId, " myDude.npcName: ", myDude.npcName  );
               console.log("myDude.animTextIndex: ", myDude.animTextIndex, " myDude.animTextMaxIndex: ", myDude.animTextMaxIndex  );
             }
 
         }
+          // ************ ========== : animNPCGroup End ============ ************
       }
     }
 
