@@ -72,7 +72,7 @@
        </td><td style="width: 280px;">
          &nbsp; &nbsp;
          Timer: <span id="userTimer"></span> &nbsp;
-       </td><td id="testBox">
+       </td><td id="testBox" style=" font-size: x-small; margin: 5px; padding: 5px;">
              Test:
         </td><td>
          <label for="silentCheckBox">Mute</label>

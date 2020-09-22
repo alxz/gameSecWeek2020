@@ -26,7 +26,7 @@ App.prototype.start = function () {
     var language = '';
     var megaMAP;    var initMap;    var roomsMAP = [];
     var userIUN;
-    var player;    var npcGroup; var arrScenes =[]; var arrAllStories=[];
+    var player;    var npcGroup; var arrScenes =[];
     var theGameIsStarted = false;
     var cursors;
     var score ;
@@ -137,10 +137,9 @@ App.prototype.start = function () {
         //docMUHC50x75L4U4D4R4
         this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
         this.load.spritesheet('HSoloMan', 'png/HSoloMan1_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
-        this.load.spritesheet('HSoloManTypingPhoto', 'png/HSoloMan_TypingPhonePhoto.png', {frameWidth: 50, frameHeight: 75});
         this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
 
-        this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v2Lock.png', {frameWidth: 75, frameHeight: 75});
+        this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v1.png', {frameWidth: 75, frameHeight: 75});
         //yellowDocOne.png
         this.load.spritesheet('yellowDocOne', 'png/yellowDocOne.png', {frameWidth: 64, frameHeight: 72});
         //HSoloMan_SingleImg_Sprite
@@ -297,156 +296,96 @@ App.prototype.start = function () {
         // player.x and player.y - its a player coordinates
         let thisX = player.x;
         let thisY = player.y;
-        let pX = Math.floor(thisX / 800);
-        let pY = Math.floor(thisY / 520);
+        let deltaX = Math.floor(thisX / 800);
+        let deltaY = Math.floor(thisY / 520);
+        npcGroup.children.iterate(child => {
+          if (child.roomCoord.x === deltaX && child.roomCoord.y === deltaY) {
 
-    //lets iterate over the array of scripted scenes:
-        for (let idx = 0; idx < arrAllStories.length; idx++) {
-            var myObj = arrAllStories[idx];
-            var myX = myObj.rmCoord.x;
-            var myY = myObj.rmCoord.y;
+            if (child.isActive === true && child.npcId === 1) {
+              //show on-screen text:
+              var animIndex = child.animTextIndex;
+              if (animIndex <= child.animTextMaxIndex) {
+                  var timeoutTxt = child.animText[animIndex].txtTimeToShow * 1000;
+                  if (timeoutTxt > 0 ) {
 
-            // we get in only if this is the same room coordinates:
-            if ( myX === pX && myY === pY ) {
-                var curtScene = myObj.nextScene;
-                var lastScene = myObj.lastScene;
+                      var vectorX = child.animText[animIndex].moveVectorX;
+                      //$('#testBox span').text(vectorX);
+                      testBox.innerHTML = vectorX;
+                      if (vectorX == 1 ) {
+                          if (child.x < child.animText[animIndex].posX.maxX) {
+                              child.setVelocityX(100);
+                              child.anims.play('walkRight', true);
+                          } else {
+                              child.setVelocityX(0);
+                              child.anims.play(child.npcDefaultKey, true);
+                          }
+                      }
+                      if (vectorX == -1)  {
+                          if (child.x > child.animText[animIndex].posX.minX) {
+                              child.setVelocityX(-100);
+                              child.anims.play('walkLeft', true);
+                          } else {
+                              child.setVelocityX(0);
+                              child.anims.play(child.npcDefaultKey, true);
+                          }
+                      }
+                      if (vectorX == 0) {
+                          child.setVelocityX(0);
+                          child.anims.play(child.npcDefaultKey, true);
+                      }
 
-                let i = curtScene;
-                if ( i <= lastScene) {
-                    // for (let i=0; i< myObj.sceneList.length; i++)
-                    {
-                        var myScene = myObj.sceneList[i];
-                        npcGroup.children.iterate(child => {
-                            if ( child.npcId === myScene.spriteId ) {
-                                //console.log("==> child obj: ", child);
-                                testBox.innerHTML = " x:" + Math.round(child.x) + "<br/>y: " + Math.round(child.y);
-                                sceneText.setText(myScene.txtStr);
-                                sceneText.x = thisX - 380;
-                                sceneText.y = thisY + 200;
-                                if ( myScene.initRead === false) {
-                                    myScene.initRead = true;
-                                    //child.SetXY = { x: myScene.startXY.x, y: myScene.startXY.y } ;
-                                    child.x = myObj.sceneList[i].startXY.x;
-                                    child.y = myObj.sceneList[i].startXY.y;
-                                }
-                                child.anims.play(child.npcName + "_" + myScene.animKey, true);
-                                switch (myScene.moveTo) {
-                                    case "NO":
-                                        //we stand up
-                                        child.setVelocityX(0);
-                                        child.setVelocityY(0);
+                      sceneText.setText(child.animText[animIndex].txtStr);
+                      sceneText.x = player.x - 380;
+                      sceneText.y = player.y + 200;
+                      setTimeout(myFunction => {
+                          child.animText[animIndex].txtTimeToShow = 0;
+                          //txtTimeToShow
+                          //if (animIndex < child.animTextMaxIndex) {
+                          child.animTextIndex = animIndex + 1;
+                          //console.log("child.animTextIndex: ", child.animTextIndex); //animTextMaxIndex
+                          sceneText.setText("");
+                          //}
+                      }, timeoutTxt);
+                  }
+              }
 
-                                        myScene.moveTo = "";
-                                        setTimeout(myFunction => {
-                                            // console.log("==> child XY x: ", child.x, " y:", child.y);
-                                            // console.log("==> myScene.txtStr: ", myScene.txtStr);
-                                            myObj.nextScene ++;
-                                            // console.log("==> curtScene: " , curtScene, " lastScene: ", lastScene);
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-
-                                            console.log("==> curtScene NO direction: " , curtScene, " lastScene: ", lastScene);
-                                            console.log("**** ==> myObj json object is : ", myObj);
-                                            if (myScene.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false);// child.anims.play(child.npcDefaultKey, true);
-                                            }
-
-                                        }, myScene.timeFrame * 1000);
-
-                                        break;
-                                    case "LEFT":
-                                        // we move left
-                                        child.setVelocityX(-100);
-
-                                        if ( child.x < myScene.endXY.x ) {
-                                           myObj.nextScene ++;
-
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-
-                                            if (myScene.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
-                                            }
-                                         }
-                                        break;
-                                    case "RIGHT":
-                                        // we move right
-                                        child.setVelocityX(100);
-
-                                        if ( child.x > myScene.endXY.x ) {
-                                            myObj.nextScene ++;
-
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-                                            if (myScene.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
-                                            }
-                                        }
-                                        break;
-                                    case "DOWN":
-                                        // we move down
-                                        child.setVelocityY(100);
-                                        if ( child.y > myScene.endXY.y ) {
-                                            myObj.nextScene ++;
-
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-                                            if (myObj.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
-                                            }
-                                        }
-                                        break;
-                                    case "UP":
-                                        // we move up
-                                        child.setVelocityY(-100);
-                                        if ( child.y < myScene.endXY.y ) {
-                                            myObj.nextScene ++;
-
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-                                            if (myScene.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
-                                            }
-                                        }
-                                        break;
-                                    default:
-
-                                    // default action is:
-                                }
-                                //testBox.innerHTML = " S:" +curtScene;
-                            }
-                        })
-                        //////////
-                    }
-                }
+              // var timeoutTxt2 = child.animText[1].txtTimeToShow * 1000;
+              // if (timeoutTxt == 0 && timeoutTxt2 > 0) {
+              //   sceneText.setText(child.animText[1].txtStr);
+              //   sceneText.x = player.x - 430;
+              //   sceneText.y = player.y + 200;
+              //   setTimeout(myFunction => {
+              //     child.animText[1].txtTimeToShow = 0;
+              //     sceneText.setText("");
+              //   }, timeoutTxt2);
+              // }
+              //analyze NPC movements:
             }
-        }
-    }
+          }
+        })
+
+        // player.mazeCoord = { mazeX: deltaX, mazeY: deltaY };
+        // doorkeys.children.iterate(child => {
+        //   if (child.roomCoord.x === deltaX && child.roomCoord.y === deltaY) {
+        //     var vector = child.moveVector;
+        //       if (vector === 1) {
+        //         child.setVelocityX(100);
+        //         child.anims.play('walkingDudeRight', true);
+        //       }
+        //       if (vector === -1)  {
+        //         child.setVelocityX(-100);
+        //         child.anims.play('walkingDudeLeft', true);
+        //       }
+        //
+        //     //alert("Collision detected!");
+        //     // console.log('--> dude state changes!');
+        //   }
+        //   // if (child && child.getBounds().contains(deltaX, deltaY)) {
+        //   //   child.destroy(child, true);
+        //   //   alert("Collision detected!");
+        //   // }
+        // })
+    };
 
     function npcHitTheWall(npc, wall) {
       // var initXY = npc.initCoord;
@@ -789,7 +728,6 @@ App.prototype.start = function () {
                 var arrKeys = [];
                 var getKeyCordinateWithProximity = function (keys, minProximity) {
                     //To generate a random keys location:
-                    /*
                     // var c1 = {x: 400 + indX + randomPlsOrMin(50, 80), y: 260 + indY + randomPlsOrMin(50, 30)};
                     var c1 = {x: 400 + indX + randomPlsOrMin(20, 60), y: 260 + indY + randomPlsOrMin(20, 50)};
                     var check = 0;
@@ -802,8 +740,6 @@ App.prototype.start = function () {
                             return getKeyCordinateWithProximity(keys, minProximity);
                         }
                     }
-                    */
-                    var c1 = {x: 400 + indX , y: 260+ indY }; // JUST SET TO CENTER!
                     return c1;
                 }
                 if (x == 0 && y == 0) {
@@ -865,9 +801,6 @@ App.prototype.start = function () {
                         // myDude.roomCoord.y = y;
                         //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
                         myDude.anims.play('rotatingKey', true);
-
-                        //myDude.disableBody();
-
                         //console.log("question from key", myKey.question);
                         keyIndex++;
                         arrKeys[arrKeys.length] = coord;
@@ -975,6 +908,18 @@ App.prototype.start = function () {
             frameRate: 10,
             repeat: -1
         });
+
+        player
+            .setInteractive({ draggable: true })
+            .on('dragstart', function(pointer, dragX, dragY){
+                // ...
+            })
+            .on('drag', function(pointer, dragX, dragY){
+                player.setPosition(dragX, dragY);
+            })
+            .on('dragend', function(pointer, dragX, dragY, dropped){
+                // ...
+            })
     }
 
     function highlighMapPos(oldY,oldX,pY,pX,colorCode) {
@@ -993,124 +938,6 @@ App.prototype.start = function () {
 
     function buildStory(coordX, coordY,scene) {
       //a function to build a room animation logic
-      arrAllStories = [
-          {
-              storyId: 1,
-              rmCoord: { x: 0, y: 1 },
-              nextScene: 0,
-              lastScene: 6,
-              sceneList: [
-                  {
-                      sceneId: 0,
-                      spriteId: 1,
-                      animKey: 'walkLeft',
-                      moveTo: 'LEFT',
-                      vectorXY: { x: -1, y: 0 },
-                      startXY: { x: 650, y: 720 },
-                      endXY: { x: 320, y: 720 },
-                      timeFrame: 5,
-                      txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
-                      initRead: false,
-                      removeSprite: false,
-                      lastAnimKey: 'standFace'
-
-                  },
-                  {
-                      sceneId: 1,
-                      spriteId: 0,
-                      animKey: 'compDeskOpen',
-                      moveTo: 'NO',
-                      vectorXY: { x: 0, y: 0 },
-                      startXY: { x: 280, y: 720 },
-                      endXY: { x: 280, y: 720 },
-                      timeFrame: 10,
-                      txtLabel: 'EmplSpeech',
-                      txtStr: ' Computer: Please enter your user name and password!',
-                      initRead: false,
-                      removeSprite: false,
-                      lastAnimKey: 'compDeskOpen'
-                  },
-                  {
-                      sceneId: 2,
-                      spriteId: 1,
-                      animKey: 'walkRight',
-                      moveTo: 'RIGHT',
-                      vectorXY: { x: 1, y: 0 },
-                      startXY: { x: 320, y: 720 },
-                      endXY: { x: 650, y: 720 },
-                      timeFrame: 5,
-                      txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
-                      initRead: false,
-                      removeSprite: false,
-                      lastAnimKey: 'standFace'
-                  },
-                  {
-                      sceneId: 3,
-                      spriteId: 1,
-                      animKey: 'walkUp',
-                      moveTo: 'DOWN',
-                      vectorXY: { x: 0, y: 1 },
-                      startXY: { x: 650, y: 720 },
-                      endXY: { x: 650, y: 850 },
-                      timeFrame: 5,
-                      txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: Quickly! \r\n   I need to go to the cafeteria now!',
-                      initRead: false,
-                      removeSprite: false,
-                      lastAnimKey: 'standFace'
-                  },
-                  {
-                      sceneId: 4,
-                      spriteId: 2,
-                      animKey: 'walkDownHSolo',
-                      moveTo: 'UP',
-                      vectorXY: { x: 0, y: -1 },
-                      startXY: { x: 320, y: 850 },
-                      endXY: { x: 320, y: 720 },
-                      timeFrame: 5,
-                      txtLabel: 'Joker',
-                      txtStr: ' Joker: Yes! \r\n   Get to go!!!',
-                      initRead: false,
-                      removeSprite: true,
-                      lastAnimKey: 'HSoloStandUp'
-                  },
-                  {
-                      sceneId: 5,
-                      spriteId: 3,
-                      animKey: 'typingLeftHSolo',
-                      moveTo: 'NO',
-                      vectorXY: { x: 0, y: 0 },
-                      startXY: { x: 320, y: 720 },
-                      endXY: { x: 320, y: 720 },
-                      timeFrame: 5,
-                      txtLabel: 'Joker',
-                      txtStr: ' Joker: Welcome! \r\n   Lets see what is there!!!',
-                      initRead: false,
-                      removeSprite: false,
-                      lastAnimKey: 'typingLeftHSolo'
-                  },
-                  {
-                      sceneId: 6,
-                      spriteId: 3,
-                      animKey: 'HSoloPhotoLeft',
-                      moveTo: 'NO',
-                      vectorXY: { x: 0, y: 0 },
-                      startXY: { x: 320, y: 720 },
-                      endXY: { x: 320, y: 720 },
-                      timeFrame: 5,
-                      txtLabel: 'Joker',
-                      txtStr: ' Joker: I wil take some photos... \r\n  Thats it, all done!',
-                      initRead: false,
-                      removeSprite: false,
-                      lastAnimKey: 'HSoloStay'
-                  }
-              ]
-          }
-      ];
-
-        console.log("==> arrAllStories:  ", arrAllStories);
       // passed parameters: coordX, coordY - these are for a room center coordinates
       npcGroup = scene.physics.add.group({
           immovable: true
@@ -1121,28 +948,30 @@ App.prototype.start = function () {
           sceneName: 'lockYourComputer',
           cCoordX : coordX,
           cCoordY : coordY,
-
           animNPCGroup : [
             {
               id: 0,
               isActive: false,
               objType: 'DECORATION',
               npcName: 'compDesk1',
-              defaultKey: 'compDeskLock',
-              npcCoordX : (280),
-              npcCoordY : (720),
+              defaultKey: 'compDeskOpen',
+                npcCoordX : (280),
+                npcCoordY : (720),
+              animPath: [
+                { pathX: 0, pathY: 0, velocityX: 0, velocityY: 0 }
+              ],
               animList: [
                 {
                   key: 'compDeskOpen',
                   frames: { spriteName: 'compDesk4x4', start: 0, end: 3 },
                   frameRate: 5,
-                  repeat: 10
+                  repeat: -1
                 },
                 {
                   key: 'compDeskLock',
                   frames: { spriteName: 'compDesk4x4', start: 4, end: 7 },
                   frameRate: 5,
-                  repeat: 10
+                  repeat: -1
                 }
               ]
             },
@@ -1152,8 +981,11 @@ App.prototype.start = function () {
               objType: 'NPC',
               npcName: 'YellowDoc',
               defaultKey: 'standFace',
-                        npcCoordX : (650),
-                        npcCoordY : (720),
+                npcCoordX : (440),
+                npcCoordY : (720),
+              animPath: [
+                { pathX: 200, pathY: 0, velocityX: 100, velocityY: 0 }
+              ],
               animList: [
                 {
                   key: 'standFace',
@@ -1193,8 +1025,11 @@ App.prototype.start = function () {
                   objType: 'NPC',
                   npcName: 'Joker',
                   defaultKey: 'HSoloStandUp',
-                          npcCoordX : (320),
-                          npcCoordY : (880),
+                  npcCoordX : (320),
+                  npcCoordY : (880),
+                  animPath: [
+                      { pathX: 200, pathY: 0, velocityX: 100, velocityY: 0 }
+                  ],
                   animList: [
                       {
                           key: 'HSoloStandUp',
@@ -1203,73 +1038,26 @@ App.prototype.start = function () {
                           repeat: -1
                       },
                       {
-                          key: 'walkUpHSolo',
+                          key: 'walkUp',
                           frames: { spriteName: 'HSoloMan', start: 4, end: 7 },
                           frameRate: 5,
                           repeat: -1
                       },
                       {
-                          key: 'walkDownHSolo',
+                          key: 'walkDown',
                           frames: { spriteName: 'HSoloMan', start: 8, end: 11 },
                           frameRate: 5,
                           repeat: -1
                       },
                       {
-                          key: 'walkLeftHSolo',
+                          key: 'walkLeft',
                           frames: { spriteName: 'HSoloMan', start: 0, end: 3 },
                           frameRate: 5,
                           repeat: -1
                       },
                       {
-                          key: 'walkRightHSolo',
+                          key: 'walkRight',
                           frames: { spriteName: 'HSoloMan', start: 12, end: 15 },
-                          frameRate: 5,
-                          repeat: -1
-                      }
-                  ]
-              },
-              {
-                  id: 3,
-                  isActive: true,
-                  objType: 'NPC',
-                  npcName: 'JokerPhone',
-                  defaultKey: 'HSoloStay',
-                  npcCoordX : (320),
-                  npcCoordY : (880),
-                  animList: [
-                      {
-                          key: 'HSoloStay',
-                          frames: { spriteName: 'HSoloManTypingPhoto', start: 5, end: 5 },
-                          frameRate: 1,
-                          repeat: -1
-                      },
-                      {
-                          key: 'faceBackHSolo',
-                          frames: { spriteName: 'HSoloManTypingPhoto', start: 8, end: 11 },
-                          frameRate: 5,
-                          repeat: -1
-                      },
-                      {
-                          key: 'typingLeftHSolo',
-                          frames: { spriteName: 'HSoloManTypingPhoto', start: 0, end: 3 },
-                          frameRate: 5,
-                          repeat: -1
-                      },
-                      {
-                          key: 'typingRightHSolo',
-                          frames: { spriteName: 'HSoloManTypingPhoto', start: 12, end: 15 },
-                          frameRate: 5,
-                          repeat: -1
-                      },
-                      {
-                          key: 'HSoloPhotoLeft',
-                          frames: { spriteName: 'HSoloManTypingPhoto', start: 4, end: 7 },
-                          frameRate: 5,
-                          repeat: -1
-                      },
-                      {
-                          key: 'HSoloPhotoRight',
-                          frames: { spriteName: 'HSoloManTypingPhoto', start: 4, end: 7 },
                           frameRate: 5,
                           repeat: -1
                       }
@@ -1359,35 +1147,31 @@ App.prototype.start = function () {
           animTextMaxIndex: 3
         }
       ];
-      //==================== /==================== /====================
-      // let deltaX = Math.floor(coordX * 400);  // let deltaY = Math.floor(coordY * 260);
-      //==================== /==================== /====================
-
+      //====================
+      // let deltaX = Math.floor(coordX * 400);
+      // let deltaY = Math.floor(coordY * 260);
+      //====================
       for (let k=0; k< arrScenes.length; k++) {
         // going over an array: arrScenes
         var sceneAnimGrp = arrScenes[k].animNPCGroup;
         console.log("===> arrScenes Objects[",k,"]",arrScenes[k]);
         sceneTxtHolder.push(arrScenes[k].animText);
-
         // ************ ========== animNPCGroup start: ============ ************
         for (let i=0; i < sceneAnimGrp.length; i++) {
           //animNPCGroup - we loop over the group of sprites:
             var myObj = sceneAnimGrp[i];
-
             var npcId = myObj.id;
+            var npcName = myObj.npcName;
             var objActive = myObj.isActive;
             var objType = myObj.objType;
-            var npcName = myObj.npcName;
-            var npcDefaultKey = myObj.npcName + "_" + myObj.defaultKey;
             var sceneCoordX = myObj.npcCoordX;
             var sceneCoordY = myObj.npcCoordY;
-
+            var npcDefaultKey = myObj.defaultKey;
             console.log("===> npcName (sceneAnimGrp[",i,"])",npcName);
             console.log("===> npcId (sceneAnimGrp[",i,"])",npcId);
-
           for (let m=0; m < myObj.animList.length; m++ ) {
             //reading animation parameters:
-              var animKey = npcName + "_" + myObj.animList[m].key;
+              var animKey = myObj.animList[m].key;
               var animSprite = myObj.animList[m].frames.spriteName;
               var animStart = myObj.animList[m].frames.start;
               var animEnd = myObj.animList[m].frames.end;
@@ -1401,43 +1185,45 @@ App.prototype.start = function () {
                   repeat: animRepeat
               });
           }
+            console.log("===> sceneAnimGrp animKey[",i,"]",animKey);
             // create an object and place it to the group:
-            // use myObj.standFace to set standing posture:
-            var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcDefaultKey).setScale(1);
-            myDude.npcDefaultKey = npcDefaultKey;
-            console.log("myDude.npcDefaultKey: ", myDude.npcDefaultKey );
-            //activate default animation:
-            // myDude.anims.play(npcDefaultKey);
-
+            if (objType === 'NPC') {
+              // use myObj.standFace to set standing posture:
+              var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcDefaultKey).setScale(1); //doors keys (dude)
+                myDude.npcDefaultKey = npcDefaultKey;
+                console.log("myDude.npcDefaultKey: ", myDude.npcDefaultKey );
+              //activate default animation:
+              myDude.anims.play(npcDefaultKey, false);
+            } else if (objType === 'DECORATION') {
+              // use myObj.standFace to set standing posture:
+              var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcDefaultKey).setScale(1); //doors keys (dude)
+              //activate default animation:
+              myDude.anims.play(npcDefaultKey, false);
+            } else {
+              //unknown type!
+              console.log("!!! Alert: Animation object type unknown!");
+            }
             myDude.npcName = npcName;
             myDude.npcId = npcId;
-            myDude.moveVector = 0;
+            myDude.moveVector = -1;
             myDude.isActive = objActive;
             myDude.objType = objType;
             myDude.npcDefaultKey = npcDefaultKey;
-            myDude.animList = myObj.animList;
-            // myDude.roomCoord = {
-            //   x: Math.floor(sceneCoordX / 800) ,
-            //   y: Math.floor(sceneCoordY / 520)
-            // } ;
-            // if (myDude.isActive) {
-            //   myDude.animText = arrScenes[k].animText;
-            //   myDude.animTextIndex = arrScenes[k].animTextIndex;
-            //   myDude.animTextMaxIndex = arrScenes[k].animTextMaxIndex;
-            //   console.log("myDude.npcId: ", myDude.npcId, " myDude.npcName: ", myDude.npcName  );
-            //   console.log("myDude.animTextIndex: ", myDude.animTextIndex, " myDude.animTextMaxIndex: ", myDude.animTextMaxIndex  );
-            // }
-            if (myDude.objType === 'DECORATION') {
-                myDude.anims.play(npcDefaultKey, false);
-            } else {
-                myDude.anims.play(npcDefaultKey, true);
-
+            myDude.roomCoord = {
+              x: Math.floor(sceneCoordX / 800) ,
+              y: Math.floor(sceneCoordY / 520)
+            } ;
+            if (myDude.isActive) {
+              myDude.animText = arrScenes[k].animText;
+              myDude.animTextIndex = arrScenes[k].animTextIndex;
+              myDude.animTextMaxIndex = arrScenes[k].animTextMaxIndex;
+              console.log("myDude.npcId: ", myDude.npcId, " myDude.npcName: ", myDude.npcName  );
+              console.log("myDude.animTextIndex: ", myDude.animTextIndex, " myDude.animTextMaxIndex: ", myDude.animTextMaxIndex  );
             }
+
         }
           // ************ ========== : animNPCGroup End ============ ************
       }
-        var jsonAnim = scene.anims.toJSON(); //Export animation to JSON
-        console.log("!!!!***===>  Game jsonAnim: ", jsonAnim );
     }
 
 /////////questions functionality
