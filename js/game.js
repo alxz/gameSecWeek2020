@@ -140,7 +140,7 @@ App.prototype.start = function () {
         this.load.spritesheet('HSoloManTypingPhoto', 'png/HSoloMan_TypingPhonePhoto.png', {frameWidth: 50, frameHeight: 75});
         this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
 
-        this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v2Lock.png', {frameWidth: 75, frameHeight: 75});
+        this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v3Lock.png', {frameWidth: 75, frameHeight: 75});
         //yellowDocOne.png
         this.load.spritesheet('yellowDocOne', 'png/yellowDocOne.png', {frameWidth: 64, frameHeight: 72});
         //HSoloMan_SingleImg_Sprite
@@ -319,7 +319,8 @@ App.prototype.start = function () {
                         npcGroup.children.iterate(child => {
                             if ( child.npcId === myScene.spriteId ) {
                                 //console.log("==> child obj: ", child);
-                                testBox.innerHTML = " x:" + Math.round(child.x) + "<br/>y: " + Math.round(child.y);
+
+                                //testBox.innerHTML = " x:" + Math.round(child.x) + "<br/>y: " + Math.round(child.y);
                                 sceneText.setText(myScene.txtStr);
                                 sceneText.x = thisX - 380;
                                 sceneText.y = thisY + 200;
@@ -328,6 +329,7 @@ App.prototype.start = function () {
                                     //child.SetXY = { x: myScene.startXY.x, y: myScene.startXY.y } ;
                                     child.x = myObj.sceneList[i].startXY.x;
                                     child.y = myObj.sceneList[i].startXY.y;
+                                    child.enableBody(true, child.x,child.y, true, true);
                                 }
                                 child.anims.play(child.npcName + "_" + myScene.animKey, true);
                                 switch (myScene.moveTo) {
@@ -1276,85 +1278,85 @@ App.prototype.start = function () {
                   ]
               }
           ],
-          animText: [
-            {
-              id: 0,
-              npcId: 1,
-              npcName: 'YellowDoc',
-              txtLabel: 'EmplSpeech',
-              txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
-              txtTimeToShow: 5,
-              moveVectorX: -1,
-              posX: { minX: 310, maxX: 500 },
-              posY: { minY: 440, maxY: 440 }
-            },
-            {
-              id: 1,
-              npcId: 1,
-              npcName: 'YellowDoc',
-              txtLabel: 'EmplSpeech',
-              txtStr: ' Computer: Please enter your user name and password!',
-              txtTimeToShow: 5,
-              moveVectorX: 0,
-              posX: { minX: 310, maxX: 500 },
-              posY: { minY: 440, maxY: 440 }
-            },
-            {
-              id: 2,
-              npcId: 1,
-              npcName: 'YellowDoc',
-              txtLabel: 'CompScreenMsg1',
-              txtStr: 'Computer: Patients records access allowed!',
-              txtTimeToShow: 5,
-              moveVectorX: 0,
-              posX: { minX: 310, maxX: 500 },
-              posY: { minY: 440, maxY: 440 }
-            },
-            {
-              id: 3,
-              npcId: 1,
-              npcName: 'YellowDoc',
-              txtLabel: 'CompScreenMsg',
-              txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
-              txtTimeToShow: 5,
-              moveVectorX: 1,
-              posX: { minX: 310, maxX: 600 },
-              posY: { minY: 440, maxY: 440 }
-            },
-              {
-                  id: 4,
-                  npcId: 2,
-                  npcName: 'Joker',
-                  txtLabel: 'JokerMsg',
-                  txtStr: ' Hacker: Yes, I see something interesting \r\n   Gonna take a look now...',
-                  txtTimeToShow: 5,
-                  moveVectorX: -1,
-                  posX: { minX: 320, maxX: 320 },
-                  posY: { minY: 720, maxY: 880 }
-              },
-              {
-                  id: 5,
-                  npcId: 2,
-                  npcName: 'Joker',
-                  txtLabel: 'JokerMsg',
-                  txtStr: ' Hacker: Oh, great, let me try! \r\n   A piece of cake!',
-                  txtTimeToShow: 5,
-                  moveVectorX: 0,
-                  posX: { minX: 320, maxX: 320 },
-                  posY: { minY: 720, maxY: 880 }
-              },
-              {
-                  id: 6,
-                  npcId: 2,
-                  npcName: 'Joker',
-                  txtLabel: 'JokerMsg',
-                  txtStr: ' Hacker: Its time to leave... \r\n   Buy-bye my friends!',
-                  txtTimeToShow: 5,
-                  moveVectorX: 1,
-                  posX: { minX: 320, maxX: 320 },
-                  posY: { minY: 720, maxY: 880 }
-              }
-          ],
+          // animText: [
+          //   {
+          //     id: 0,
+          //     npcId: 1,
+          //     npcName: 'YellowDoc',
+          //     txtLabel: 'EmplSpeech',
+          //     txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
+          //     txtTimeToShow: 5,
+          //     moveVectorX: -1,
+          //     posX: { minX: 310, maxX: 500 },
+          //     posY: { minY: 440, maxY: 440 }
+          //   },
+          //   {
+          //     id: 1,
+          //     npcId: 1,
+          //     npcName: 'YellowDoc',
+          //     txtLabel: 'EmplSpeech',
+          //     txtStr: ' Computer: Please enter your user name and password!',
+          //     txtTimeToShow: 5,
+          //     moveVectorX: 0,
+          //     posX: { minX: 310, maxX: 500 },
+          //     posY: { minY: 440, maxY: 440 }
+          //   },
+          //   {
+          //     id: 2,
+          //     npcId: 1,
+          //     npcName: 'YellowDoc',
+          //     txtLabel: 'CompScreenMsg1',
+          //     txtStr: 'Computer: Patients records access allowed!',
+          //     txtTimeToShow: 5,
+          //     moveVectorX: 0,
+          //     posX: { minX: 310, maxX: 500 },
+          //     posY: { minY: 440, maxY: 440 }
+          //   },
+          //   {
+          //     id: 3,
+          //     npcId: 1,
+          //     npcName: 'YellowDoc',
+          //     txtLabel: 'CompScreenMsg',
+          //     txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
+          //     txtTimeToShow: 5,
+          //     moveVectorX: 1,
+          //     posX: { minX: 310, maxX: 600 },
+          //     posY: { minY: 440, maxY: 440 }
+          //   },
+          //     {
+          //         id: 4,
+          //         npcId: 2,
+          //         npcName: 'Joker',
+          //         txtLabel: 'JokerMsg',
+          //         txtStr: ' Hacker: Yes, I see something interesting \r\n   Gonna take a look now...',
+          //         txtTimeToShow: 5,
+          //         moveVectorX: -1,
+          //         posX: { minX: 320, maxX: 320 },
+          //         posY: { minY: 720, maxY: 880 }
+          //     },
+          //     {
+          //         id: 5,
+          //         npcId: 2,
+          //         npcName: 'Joker',
+          //         txtLabel: 'JokerMsg',
+          //         txtStr: ' Hacker: Oh, great, let me try! \r\n   A piece of cake!',
+          //         txtTimeToShow: 5,
+          //         moveVectorX: 0,
+          //         posX: { minX: 320, maxX: 320 },
+          //         posY: { minY: 720, maxY: 880 }
+          //     },
+          //     {
+          //         id: 6,
+          //         npcId: 2,
+          //         npcName: 'Joker',
+          //         txtLabel: 'JokerMsg',
+          //         txtStr: ' Hacker: Its time to leave... \r\n   Buy-bye my friends!',
+          //         txtTimeToShow: 5,
+          //         moveVectorX: 1,
+          //         posX: { minX: 320, maxX: 320 },
+          //         posY: { minY: 720, maxY: 880 }
+          //     }
+          // ],
           animTextIndex: 0,
           animTextMaxIndex: 3
         }
@@ -1367,7 +1369,7 @@ App.prototype.start = function () {
         // going over an array: arrScenes
         var sceneAnimGrp = arrScenes[k].animNPCGroup;
         console.log("===> arrScenes Objects[",k,"]",arrScenes[k]);
-        sceneTxtHolder.push(arrScenes[k].animText);
+        //sceneTxtHolder.push(arrScenes[k].animText);
 
         // ************ ========== animNPCGroup start: ============ ************
         for (let i=0; i < sceneAnimGrp.length; i++) {
@@ -1431,7 +1433,7 @@ App.prototype.start = function () {
                 myDude.anims.play(npcDefaultKey, false);
             } else {
                 myDude.anims.play(npcDefaultKey, true);
-
+                myDude.disableBody(false, true);
             }
         }
           // ************ ========== : animNPCGroup End ============ ************
