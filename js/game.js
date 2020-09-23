@@ -448,6 +448,14 @@ App.prototype.start = function () {
                         })
                         //////////
                     }
+                }  else {
+                    // if all scene activities done we show questions:
+                    doorkeys.children.iterate(child => {
+                        if ( child.roomCoord.x === pX && child.roomCoord.y === pY) {
+                            //myX === pX && myY === pY
+                            child.enableBody(true, child.initCoord.x, child.initCoord.y, true, true);
+                        }
+                    })
                 }
             }
         }
@@ -794,7 +802,7 @@ App.prototype.start = function () {
                 var arrKeys = [];
                 var getKeyCordinateWithProximity = function (keys, minProximity) {
                     //To generate a random keys location:
-                    /*
+                    /* -- We disable start room keys now (no need for this type of the game):
                     // var c1 = {x: 400 + indX + randomPlsOrMin(50, 80), y: 260 + indY + randomPlsOrMin(50, 30)};
                     var c1 = {x: 400 + indX + randomPlsOrMin(20, 60), y: 260 + indY + randomPlsOrMin(20, 50)};
                     var check = 0;
@@ -811,71 +819,51 @@ App.prototype.start = function () {
                     var c1 = {x: 400 + indX , y: 260+ indY }; // JUST SET TO CENTER!
                     return c1;
                 }
-                if (x == 0 && y == 0) {
-                    keysCount = keysCount + 1;
-                }
+                // We disable start room keys now (no need for this type of the game):
+                // if (x == 0 && y == 0) {
+                //     keysCount = keysCount + 1;
+                // }
                 for (var i = 0; i < keysCount; i++) {
                     if (x == maxRoomCountX - 1 && y == maxRoomCountY - 1) {
                         //this is our final room - no keys required...
                         //TODO: place a final room sprite here!!!
                         //draw the patient: hospitalBed
                         hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'patientEmptyPlaceHolder').setScale(1.2);
-                    } else if (x == 0 && y == 0) {
-                      //skip - no need to place a NPC
+
                     } else {
                         var coord = getKeyCordinateWithProximity(arrKeys, 100);
-                        //doorkeys.create(coord.x, coord.y, 'star').setScale(0.8); //doors keys
-                        //var myKey = doorkeys.create(coord.x, coord.y, 'gold-key').setScale(0.5); //doors keys
-                        // 'green-key-sprite', {start: 0, end: 18} -vs- 'gold-key-sprite', {start: 0, end: 6}
-                        scene.anims.create({
-                            key: 'rotatingKey',
-                            frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
-                            frameRate: 10,
-                            repeat: -1
-                        });
-                                // scene.anims.create({
-                                //     key: 'marchingDude',
-                                //     frames: scene.anims.generateFrameNumbers('docOther', {start: 4, end: 7}),
-                                //     frameRate: 5,
-                                //     repeat: -1
-                                // });
-                                // scene.anims.create({
-                                //     key: 'walkingDudeLeft',
-                                //     frames: scene.anims.generateFrameNumbers('docOther', {start: 0, end: 3}),
-                                //     frameRate: 5,
-                                //     repeat: -1
-                                // });
-                                // scene.anims.create({
-                                //     key: 'walkingDudeRight',
-                                //     frames: scene.anims.generateFrameNumbers('docOther', {start: 12, end: 15}),
-                                //     frameRate: 5,
-                                //     repeat: -1
-                                // });
-                                // scene.anims.create({
-                                //     key: 'yellowDocOne',
-                                //     frames: scene.anims.generateFrameNumbers('yellowDocOne'),
-                                //     frameRate: 1,
-                                //     repeat: -1
-                                // });
-                        // var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
-                        // myKey.question = megaMAP.questionList[keyIndex];
-                        // myKey.anims.play('rotatingKey', true);
-                        var myDude = doorkeys.create(coord.x, coord.y, 'docOther').setScale(1); //doors keys (dude)
-                        myDude.question = megaMAP.questionList[keyIndex];
-                        myDude.id = keyIndex;
-                        myDude.moveVector = 1;
-                        myDude.roomCoord = { x: x, y: y};
-                        myDude.initCoord = { x: coord.x, y: coord.y};
-                        // myDude.roomCoord.x = x;
-                        // myDude.roomCoord.y = y;
-                        //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
-                        myDude.anims.play('rotatingKey', true);
+                        var isUniqueCoord = true;
+                        doorkeys.children.iterate(child => {
+                            if ( child.roomCoord.x === x && child.roomCoord.y === y) {
+                                isUniqueCoord = false;
+                                coord.x +=20;
+                                coord.y +=20;
+                            }
+                        })
+                        if (isUniqueCoord) { // we skip the room if there already one key placed before:
+                            scene.anims.create({
+                                key: 'rotatingKey',
+                                frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
+                                frameRate: 10,
+                                repeat: -1
+                            });
+                            // var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
+                            // myKey.question = megaMAP.questionList[keyIndex];
+                            // myKey.anims.play('rotatingKey', true);
+                            var myDude = doorkeys.create(coord.x, coord.y, 'docOther').setScale(1); //doors keys (dude)
+                            myDude.question = megaMAP.questionList[keyIndex];
+                            myDude.id = keyIndex;
+                            myDude.moveVector = 1;
+                            myDude.roomCoord = { x: x, y: y};
+                            myDude.initCoord = { x: coord.x, y: coord.y};
+                            //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
+                            myDude.anims.play('rotatingKey', true);
+                            myDude.disableBody(true, true); // do not remove the object, but hide it: (true,false)
 
-                        //myDude.disableBody();
-
-                        //console.log("question from key", myKey.question);
-                        keyIndex++;
-                        arrKeys[arrKeys.length] = coord;
+                            //console.log("question from key", myKey.question);
+                            keyIndex++;
+                            arrKeys[arrKeys.length] = coord;
+                        }
                     }
                 }
             //=================================================================
