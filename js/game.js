@@ -3,11 +3,13 @@ var App = function () {
 // by Alexey Zapromyotov (c) 2019-2020
 var customIUN="";
 var isSilent = false;
+var cWidth = 800; //canvas width
+var cHeight = 520; //canvas height
 App.prototype.start = function () {
     var config = {
         type: Phaser.CANVAS,
-        width: 800,
-        height: 520,
+        width: cWidth,
+        height: cHeight,
         physics: {
             default: 'arcade',
             arcade: {
@@ -283,7 +285,7 @@ App.prototype.start = function () {
         scoreText.setText('Score: ' + totalQestionsAnswered);
         scoreText.x = 50 + player.x - 400;
         scoreText.y = 50 + player.y - 300;
-        playPosText.setText('Pos: ' + Math.floor(player.x / 800) + ' / ' +  Math.floor(player.y / 520));
+        playPosText.setText('Pos: ' + Math.floor(player.x / cWidth) + ' / ' +  Math.floor(player.y / cHeight));
         playPosText.x = 250 + player.x - 400;
         playPosText.y = 50 + player.y - 300;
         if (language === 'FRA') {
@@ -298,8 +300,8 @@ App.prototype.start = function () {
         // player.x and player.y - its a player coordinates
         let thisX = player.x;
         let thisY = player.y;
-        let pX = Math.floor(thisX / 800);
-        let pY = Math.floor(thisY / 520);
+        let pX = Math.floor(thisX / cWidth);
+        let pY = Math.floor(thisY / cHeight);
 
     //lets iterate over the array of scripted scenes:
         for (let idx = 0; idx < arrAllStories.length; idx++) {
@@ -996,6 +998,8 @@ App.prototype.start = function () {
 
     function buildStory(coordX, coordY,scene) {
       //a function to build a room animation logic
+        var cW = Math.round(cWidth /2);
+        var cH = Math.round(cHeight /2);
       arrAllStories = [
           {
               storyId: 1,
@@ -1440,7 +1444,6 @@ App.prototype.start = function () {
             console.log("myDude.npcDefaultKey: ", myDude.npcDefaultKey );
             //activate default animation:
             // myDude.anims.play(npcDefaultKey);
-
             myDude.npcName = npcName;
             myDude.npcId = npcId;
             myDude.moveVector = 0;
@@ -1448,17 +1451,6 @@ App.prototype.start = function () {
             myDude.objType = objType;
             myDude.npcDefaultKey = npcDefaultKey;
             myDude.animList = myObj.animList;
-            // myDude.roomCoord = {
-            //   x: Math.floor(sceneCoordX / 800) ,
-            //   y: Math.floor(sceneCoordY / 520)
-            // } ;
-            // if (myDude.isActive) {
-            //   myDude.animText = arrScenes[k].animText;
-            //   myDude.animTextIndex = arrScenes[k].animTextIndex;
-            //   myDude.animTextMaxIndex = arrScenes[k].animTextMaxIndex;
-            //   console.log("myDude.npcId: ", myDude.npcId, " myDude.npcName: ", myDude.npcName  );
-            //   console.log("myDude.animTextIndex: ", myDude.animTextIndex, " myDude.animTextMaxIndex: ", myDude.animTextMaxIndex  );
-            // }
             if (myDude.objType === 'DECORATION') {
                 myDude.anims.play(npcDefaultKey, false);
             } else {
