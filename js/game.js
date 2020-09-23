@@ -240,7 +240,7 @@ App.prototype.start = function () {
     function breakingBad() {
         isPause = true;
         stopPlayer();
-        //SOUND MUSIC STOPED To Debug IE11 issues
+        //SOUND MUSIC STOPPED To Debug IE11 issues
         if (!isBrowserIE) {
           music.pause();
         }
@@ -330,8 +330,8 @@ App.prototype.start = function () {
                                 if ( myScene.initRead === false) {
                                     myScene.initRead = true;
                                     //child.SetXY = { x: myScene.startXY.x, y: myScene.startXY.y } ;
-                                    child.x = myObj.sceneList[i].startXY.x;
-                                    child.y = myObj.sceneList[i].startXY.y;
+                                    child.x = myObj.sceneList[i].startXY.x + (myX * cWidth);
+                                    child.y = myObj.sceneList[i].startXY.y + (myY * cHeight);
                                     child.enableBody(true, child.x,child.y, true, true);
                                 }
                                 child.anims.play(child.npcName + "_" + myScene.animKey, true);
@@ -368,9 +368,8 @@ App.prototype.start = function () {
                                         // we move left
                                         child.setVelocityX(-100);
 
-                                        if ( child.x < myScene.endXY.x ) {
+                                        if ( child.x < (myScene.endXY.x + (myX * cWidth))) {
                                            myObj.nextScene ++;
-
                                             child.setVelocityX(0);
                                             child.setVelocityY(0);
                                             sceneText.setText("");
@@ -388,9 +387,8 @@ App.prototype.start = function () {
                                         // we move right
                                         child.setVelocityX(100);
 
-                                        if ( child.x > myScene.endXY.x ) {
+                                        if ( child.x > (myScene.endXY.x + (myX * cWidth))) {
                                             myObj.nextScene ++;
-
                                             child.setVelocityX(0);
                                             child.setVelocityY(0);
                                             sceneText.setText("");
@@ -406,9 +404,8 @@ App.prototype.start = function () {
                                     case "DOWN":
                                         // we move down
                                         child.setVelocityY(100);
-                                        if ( child.y > myScene.endXY.y ) {
+                                        if ( child.y > (myScene.endXY.y + (myY * cHeight))) {
                                             myObj.nextScene ++;
-
                                             child.setVelocityX(0);
                                             child.setVelocityY(0);
                                             sceneText.setText("");
@@ -424,9 +421,8 @@ App.prototype.start = function () {
                                     case "UP":
                                         // we move up
                                         child.setVelocityY(-100);
-                                        if ( child.y < myScene.endXY.y ) {
+                                        if ( child.y < (myScene.endXY.y + (myY * cHeight))) {
                                             myObj.nextScene ++;
-
                                             child.setVelocityX(0);
                                             child.setVelocityY(0);
                                             sceneText.setText("");
@@ -462,9 +458,6 @@ App.prototype.start = function () {
     }
 
     function npcHitTheWall(npc, wall) {
-      // var initXY = npc.initCoord;
-      // var npcX = npc.x;
-      // var npcY  = npc.y;
       var defaultKey = npc.npcDefaultKey;
       //child.anims.play('marchingDude', true);
       if (npc.moveVector === -1 && (npc.isActive) ) {
@@ -847,9 +840,7 @@ App.prototype.start = function () {
                                 frameRate: 10,
                                 repeat: -1
                             });
-                            // var myKey = doorkeys.create(coord.x, coord.y, 'gold-key-sprite').setScale(0.8); //doors keys
-                            // myKey.question = megaMAP.questionList[keyIndex];
-                            // myKey.anims.play('rotatingKey', true);
+
                             var myDude = doorkeys.create(coord.x, coord.y, 'docOther').setScale(1); //doors keys (dude)
                             myDude.question = megaMAP.questionList[keyIndex];
                             myDude.id = keyIndex;
@@ -870,7 +861,7 @@ App.prototype.start = function () {
           }
         }
         initPlayer(scene);
-        buildStory(1, 0, scene);
+        buildStory(0, 1, scene);
     }
 
     function playSound(sound) {
@@ -986,23 +977,41 @@ App.prototype.start = function () {
 
     function buildStory(coordX, coordY,scene) {
       //a function to build a room animation logic
+              //    cWidth = 800; //canvas width
+              //    cHeight = 520; //canvas height
         var cW = Math.round(cWidth /2);
         var cH = Math.round(cHeight /2);
+
       arrAllStories = [
           {
               storyId: 1,
-              rmCoord: { x: 0, y: 1 },
+              rmCoord: { x: 0, y: 1 }, //800:520
               nextScene: 0,
-              lastScene: 6,
+              lastScene: 8,
               sceneList: [
                   {
                       sceneId: 0,
+                      spriteId: 0,
+                      animKey: 'compDeskLock',
+                      moveTo: 'NO',
+                      vectorXY: { x: 0, y: 0 },
+                      startXY: { x: 280, y: 200 },
+                      endXY: { x: 280, y: 200 },
+                      timeFrame: 1,
+                      txtLabel: 'Computer',
+                      txtStr: ' Computer: z-z-z...',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'compDeskLock'
+                  },
+                  {
+                      sceneId: 1,
                       spriteId: 1,
                       animKey: 'walkLeft',
                       moveTo: 'LEFT',
                       vectorXY: { x: -1, y: 0 },
-                      startXY: { x: 650, y: 720 },
-                      endXY: { x: 320, y: 720 },
+                      startXY: { x: 650, y: 200 }, //{ x: 650, y: 720 }
+                      endXY: { x: 320, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
                       txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
@@ -1012,13 +1021,13 @@ App.prototype.start = function () {
 
                   },
                   {
-                      sceneId: 1,
+                      sceneId: 2,
                       spriteId: 0,
                       animKey: 'compDeskOpen',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
-                      startXY: { x: 280, y: 720 },
-                      endXY: { x: 280, y: 720 },
+                      startXY: { x: 280, y: 200 },
+                      endXY: { x: 280, y: 200 },
                       timeFrame: 10,
                       txtLabel: 'EmplSpeech',
                       txtStr: ' Computer: Please enter your user name and password!',
@@ -1027,13 +1036,13 @@ App.prototype.start = function () {
                       lastAnimKey: 'compDeskOpen'
                   },
                   {
-                      sceneId: 2,
+                      sceneId: 3,
                       spriteId: 1,
                       animKey: 'walkRight',
                       moveTo: 'RIGHT',
                       vectorXY: { x: 1, y: 0 },
-                      startXY: { x: 320, y: 720 },
-                      endXY: { x: 650, y: 720 },
+                      startXY: { x: 320, y: 200 },
+                      endXY: { x: 650, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
                       txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
@@ -1042,13 +1051,28 @@ App.prototype.start = function () {
                       lastAnimKey: 'standFace'
                   },
                   {
-                      sceneId: 3,
+                      sceneId: 4,
+                      spriteId: 4,
+                      animKey: 'cafeTableBrownWithChairFood',
+                      moveTo: 'NO',
+                      vectorXY: { x: 0, y: 1 },
+                      startXY: { x: 650, y: 340 },
+                      endXY: { x: 650, y: 340 },
+                      timeFrame: 1,
+                      txtLabel: 'Table',
+                      txtStr: '',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'cafeTableBrownWithChairFood'
+                  },
+                  {
+                      sceneId: 5,
                       spriteId: 1,
                       animKey: 'walkUp',
                       moveTo: 'DOWN',
                       vectorXY: { x: 0, y: 1 },
-                      startXY: { x: 650, y: 720 },
-                      endXY: { x: 650, y: 850 },
+                      startXY: { x: 650, y: 200 },
+                      endXY: { x: 650, y: 330 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
                       txtStr: ' Employee: Quickly! \r\n   I need to go to the cafeteria now!',
@@ -1057,13 +1081,13 @@ App.prototype.start = function () {
                       lastAnimKey: 'standFace'
                   },
                   {
-                      sceneId: 4,
+                      sceneId: 6,
                       spriteId: 2,
                       animKey: 'walkDownHSolo',
                       moveTo: 'UP',
                       vectorXY: { x: 0, y: -1 },
-                      startXY: { x: 320, y: 850 },
-                      endXY: { x: 320, y: 720 },
+                      startXY: { x: 320, y: 330 },
+                      endXY: { x: 320, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'Joker',
                       txtStr: ' Joker: Yes! \r\n   Get to go!!!',
@@ -1072,13 +1096,13 @@ App.prototype.start = function () {
                       lastAnimKey: 'HSoloStandUp'
                   },
                   {
-                      sceneId: 5,
+                      sceneId: 7,
                       spriteId: 3,
                       animKey: 'typingLeftHSolo',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
-                      startXY: { x: 320, y: 720 },
-                      endXY: { x: 320, y: 720 },
+                      startXY: { x: 320, y: 200 },
+                      endXY: { x: 320, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'Joker',
                       txtStr: ' Joker: Welcome! \r\n   Lets see what is there!!!',
@@ -1087,13 +1111,157 @@ App.prototype.start = function () {
                       lastAnimKey: 'typingLeftHSolo'
                   },
                   {
-                      sceneId: 6,
+                      sceneId: 8,
                       spriteId: 3,
                       animKey: 'HSoloPhotoLeft',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
-                      startXY: { x: 320, y: 720 },
-                      endXY: { x: 320, y: 720 },
+                      startXY: { x: 320, y: 200 },
+                      endXY: { x: 320, y: 200 },
+                      timeFrame: 5,
+                      txtLabel: 'Joker',
+                      txtStr: ' Joker: I wil take some photos... \r\n  Thats it, all done!',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'HSoloStay'
+                  }
+              ]
+          },
+          {
+              storyId: 2,
+              rmCoord: { x: 1, y: 0 }, //800:520
+              nextScene: 0,
+              lastScene: 8,
+              sceneList: [
+                  {
+                      sceneId: 0,
+                      spriteId: 0,
+                      animKey: 'compDeskLock',
+                      moveTo: 'NO',
+                      vectorXY: { x: 0, y: 0 },
+                      startXY: { x: 280, y: 200 },
+                      endXY: { x: 280, y: 200 },
+                      timeFrame: 1,
+                      txtLabel: 'Computer',
+                      txtStr: ' Computer: z-z-z...',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'compDeskLock'
+                  },
+                  {
+                      sceneId: 1,
+                      spriteId: 1,
+                      animKey: 'walkLeft',
+                      moveTo: 'LEFT',
+                      vectorXY: { x: -1, y: 0 },
+                      startXY: { x: 650, y: 200 }, //{ x: 650, y: 720 }
+                      endXY: { x: 320, y: 200 },
+                      timeFrame: 5,
+                      txtLabel: 'EmplSpeech',
+                      txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'standFace'
+
+                  },
+                  {
+                      sceneId: 2,
+                      spriteId: 0,
+                      animKey: 'compDeskOpen',
+                      moveTo: 'NO',
+                      vectorXY: { x: 0, y: 0 },
+                      startXY: { x: 280, y: 200 },
+                      endXY: { x: 280, y: 200 },
+                      timeFrame: 10,
+                      txtLabel: 'EmplSpeech',
+                      txtStr: ' Computer: Please enter your user name and password!',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'compDeskOpen'
+                  },
+                  {
+                      sceneId: 3,
+                      spriteId: 1,
+                      animKey: 'walkRight',
+                      moveTo: 'RIGHT',
+                      vectorXY: { x: 1, y: 0 },
+                      startXY: { x: 320, y: 200 },
+                      endXY: { x: 650, y: 200 },
+                      timeFrame: 5,
+                      txtLabel: 'EmplSpeech',
+                      txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'standFace'
+                  },
+                  {
+                      sceneId: 4,
+                      spriteId: 4,
+                      animKey: 'cafeTableBrownWithChairFood',
+                      moveTo: 'NO',
+                      vectorXY: { x: 0, y: 1 },
+                      startXY: { x: 650, y: 340 },
+                      endXY: { x: 650, y: 340 },
+                      timeFrame: 1,
+                      txtLabel: 'Table',
+                      txtStr: '',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'cafeTableBrownWithChairFood'
+                  },
+                  {
+                      sceneId: 5,
+                      spriteId: 1,
+                      animKey: 'walkUp',
+                      moveTo: 'DOWN',
+                      vectorXY: { x: 0, y: 1 },
+                      startXY: { x: 650, y: 200 },
+                      endXY: { x: 650, y: 330 },
+                      timeFrame: 5,
+                      txtLabel: 'EmplSpeech',
+                      txtStr: ' Employee: Quickly! \r\n   I need to go to the cafeteria now!',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'standFace'
+                  },
+                  {
+                      sceneId: 6,
+                      spriteId: 2,
+                      animKey: 'walkDownHSolo',
+                      moveTo: 'UP',
+                      vectorXY: { x: 0, y: -1 },
+                      startXY: { x: 320, y: 330 },
+                      endXY: { x: 320, y: 200 },
+                      timeFrame: 5,
+                      txtLabel: 'Joker',
+                      txtStr: ' Joker: Yes! \r\n   Get to go!!!',
+                      initRead: false,
+                      removeSprite: true,
+                      lastAnimKey: 'HSoloStandUp'
+                  },
+                  {
+                      sceneId: 7,
+                      spriteId: 3,
+                      animKey: 'typingLeftHSolo',
+                      moveTo: 'NO',
+                      vectorXY: { x: 0, y: 0 },
+                      startXY: { x: 320, y: 200 },
+                      endXY: { x: 320, y: 200 },
+                      timeFrame: 5,
+                      txtLabel: 'Joker',
+                      txtStr: ' Joker: Welcome! \r\n   Lets see what is there!!!',
+                      initRead: false,
+                      removeSprite: false,
+                      lastAnimKey: 'typingLeftHSolo'
+                  },
+                  {
+                      sceneId: 8,
+                      spriteId: 3,
+                      animKey: 'HSoloPhotoLeft',
+                      moveTo: 'NO',
+                      vectorXY: { x: 0, y: 0 },
+                      startXY: { x: 320, y: 200 },
+                      endXY: { x: 320, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'Joker',
                       txtStr: ' Joker: I wil take some photos... \r\n  Thats it, all done!',
@@ -1300,85 +1468,6 @@ App.prototype.start = function () {
                   ]
               }
           ],
-          // animText: [
-          //   {
-          //     id: 0,
-          //     npcId: 1,
-          //     npcName: 'YellowDoc',
-          //     txtLabel: 'EmplSpeech',
-          //     txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
-          //     txtTimeToShow: 5,
-          //     moveVectorX: -1,
-          //     posX: { minX: 310, maxX: 500 },
-          //     posY: { minY: 440, maxY: 440 }
-          //   },
-          //   {
-          //     id: 1,
-          //     npcId: 1,
-          //     npcName: 'YellowDoc',
-          //     txtLabel: 'EmplSpeech',
-          //     txtStr: ' Computer: Please enter your user name and password!',
-          //     txtTimeToShow: 5,
-          //     moveVectorX: 0,
-          //     posX: { minX: 310, maxX: 500 },
-          //     posY: { minY: 440, maxY: 440 }
-          //   },
-          //   {
-          //     id: 2,
-          //     npcId: 1,
-          //     npcName: 'YellowDoc',
-          //     txtLabel: 'CompScreenMsg1',
-          //     txtStr: 'Computer: Patients records access allowed!',
-          //     txtTimeToShow: 5,
-          //     moveVectorX: 0,
-          //     posX: { minX: 310, maxX: 500 },
-          //     posY: { minY: 440, maxY: 440 }
-          //   },
-          //   {
-          //     id: 3,
-          //     npcId: 1,
-          //     npcName: 'YellowDoc',
-          //     txtLabel: 'CompScreenMsg',
-          //     txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
-          //     txtTimeToShow: 5,
-          //     moveVectorX: 1,
-          //     posX: { minX: 310, maxX: 600 },
-          //     posY: { minY: 440, maxY: 440 }
-          //   },
-          //     {
-          //         id: 4,
-          //         npcId: 2,
-          //         npcName: 'Joker',
-          //         txtLabel: 'JokerMsg',
-          //         txtStr: ' Hacker: Yes, I see something interesting \r\n   Gonna take a look now...',
-          //         txtTimeToShow: 5,
-          //         moveVectorX: -1,
-          //         posX: { minX: 320, maxX: 320 },
-          //         posY: { minY: 720, maxY: 880 }
-          //     },
-          //     {
-          //         id: 5,
-          //         npcId: 2,
-          //         npcName: 'Joker',
-          //         txtLabel: 'JokerMsg',
-          //         txtStr: ' Hacker: Oh, great, let me try! \r\n   A piece of cake!',
-          //         txtTimeToShow: 5,
-          //         moveVectorX: 0,
-          //         posX: { minX: 320, maxX: 320 },
-          //         posY: { minY: 720, maxY: 880 }
-          //     },
-          //     {
-          //         id: 6,
-          //         npcId: 2,
-          //         npcName: 'Joker',
-          //         txtLabel: 'JokerMsg',
-          //         txtStr: ' Hacker: Its time to leave... \r\n   Buy-bye my friends!',
-          //         txtTimeToShow: 5,
-          //         moveVectorX: 1,
-          //         posX: { minX: 320, maxX: 320 },
-          //         posY: { minY: 720, maxY: 880 }
-          //     }
-          // ],
           animTextIndex: 0,
           animTextMaxIndex: 3
         }
@@ -1427,11 +1516,11 @@ App.prototype.start = function () {
           }
             // create an object and place it to the group:
             // use myObj.standFace to set standing posture:
-            var myDude = npcGroup.create(sceneCoordX, sceneCoordY, npcDefaultKey).setScale(1);
+            var myDude = npcGroup.create(sceneCoordX , sceneCoordY, npcDefaultKey).setScale(1);
             myDude.npcDefaultKey = npcDefaultKey;
             console.log("myDude.npcDefaultKey: ", myDude.npcDefaultKey );
             //activate default animation:
-            // myDude.anims.play(npcDefaultKey);
+
             myDude.npcName = npcName;
             myDude.npcId = npcId;
             myDude.moveVector = 0;
