@@ -130,6 +130,7 @@ App.prototype.start = function () {
         this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
         this.load.spritesheet('green-key-sprite', 'png/keyAnimation.png', { frameWidth: 40, frameHeight: 100 });
         this.load.image('messageBoard', 'png/messageBoard600x400.png');
+        this.load.spritesheet('cafeTableBrown', 'png/cafeteriaTablesSprite.png', {frameWidth: 80, frameHeight: 75});
 
         this.load.image('star', 'assets/star.png');
         //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
@@ -208,9 +209,9 @@ App.prototype.start = function () {
           //sceneText
           sceneText = this.add.text(10, 450, 'Text:',
             {
-              fontSize: '18px',
-              fill: '#FDFC00',
-              backgroundColor: '#479B85',
+              fontSize: '20px',
+              fill: '#DEF9FA',
+              backgroundColor: '#241D4A',
               shadow: "offsetX = 15, offsetY = 15, fill= true"
             });
 
@@ -1274,6 +1275,35 @@ App.prototype.start = function () {
                           frames: { spriteName: 'HSoloManTypingPhoto', start: 4, end: 7 },
                           frameRate: 5,
                           repeat: -1
+                      }
+                  ]
+              },
+              {
+                  id: 4,
+                  isActive: false,
+                  objType: 'DECORATION',
+                  npcName: 'cafeTable',
+                  defaultKey: 'cafeTableBrownWithChairFood',
+                  npcCoordX : (650),
+                  npcCoordY : (860),
+                  animList: [
+                      {
+                          key: 'cafeTableBrownEmpty',
+                          frames: { spriteName: 'cafeTableBrown', start: 0, end: 0 },
+                          frameRate: 5,
+                          repeat: 1
+                      },
+                      {
+                          key: 'cafeTableBrownWithChairs',
+                          frames: { spriteName: 'cafeTableBrown', start: 1, end: 1 },
+                          frameRate: 5,
+                          repeat: 1
+                      },
+                      {
+                          key: 'cafeTableBrownWithChairFood',
+                          frames: { spriteName: 'cafeTableBrown', start: 2, end: 2 },
+                          frameRate: 5,
+                          repeat: 1
                       }
                   ]
               }
