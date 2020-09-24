@@ -69,7 +69,7 @@
        </td><td>
          IUN: &nbsp;
          <input type="text" name="customIUN" onchange="updateCustomIUN(this.value)" value="" size="15">
-       </td><td style="width: 280px;">
+       </td><td style="width: 250px;">
          &nbsp; &nbsp;
          Timer: <span id="userTimer"></span> &nbsp;
        </td><td id="testBox" style=" font-size: x-small; margin: 5px; padding: 5px;">
@@ -85,6 +85,9 @@
      </tr>
     </table>
    </div>
+  <div id="testDiv" class="divTopLabel">
+      <p id="testBoxDiv" style=" font-size: x-small; margin: 5px; padding: 5px;"></p>
+  </div>
    <div id="mainDiv" class="classmainDiv">
      <div id="phaserDiv" class="classPhaserDiv">
          <canvas></canvas>

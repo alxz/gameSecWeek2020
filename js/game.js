@@ -59,6 +59,8 @@ App.prototype.start = function () {
     const submitMsgContainer = document.getElementById("submitMsg");
     const isSilentCheckBox = document.getElementById("silentCheckBox");
     const testBox = document.getElementById("testBox");
+    const testBoxDiv = document.getElementById("testBoxDiv");
+
 
     var tryUserIUN = document.getElementById("userIUNBox");
     if (tryUserIUN != null) {
@@ -302,10 +304,10 @@ App.prototype.start = function () {
         let thisY = player.y;
         let pX = Math.floor(thisX / cWidth);
         let pY = Math.floor(thisY / cHeight);
-
+        let noBreak = false;
     //lets iterate over the array of scripted scenes:
         for (let idx = 0; idx < arrAllStories.length; idx++) {
-            var myObj = arrAllStories[idx];
+            var myObj = arrAllStories[1]; //arrAllStories[idx];
             var myX = myObj.rmCoord.x;
             var myY = myObj.rmCoord.y;
 
@@ -313,16 +315,21 @@ App.prototype.start = function () {
             if ( myX === pX && myY === pY ) {
                 var curtScene = myObj.nextScene;
                 var lastScene = myObj.lastScene;
-
+                // testBoxDiv.innerHTML = "myObj.rmCoord: " + myObj.rmCoord.x + "/" +  myObj.rmCoord.y +
+                //     " Player pX/pY: " + pX + "/" +  pY;
                 let i = curtScene;
                 if ( i <= lastScene) {
                     // for (let i=0; i< myObj.sceneList.length; i++)
                     {
                         var myScene = myObj.sceneList[i];
                         npcGroup.children.iterate(child => {
-                            if ( child.npcId === myScene.spriteId ) {
-                                //console.log("==> child obj: ", child);
 
+                            if ( child.npcId === (myScene.spriteId + "_" + myObj.storyId) ) {
+                                //testBoxDiv.innerHTML = "child.npcId:" + child.npcId + " / " + (myScene.spriteId + "_" + myObj.storyId);
+                                //console.log("==> child obj: ", child);
+                                testBox.innerHTML = "npcId:" + child.npcId + "<br/>"
+                                    + "myScene:" + myScene.spriteId + "<br/>"
+                                    + "myScene+:" + (myScene.spriteId + "_" + myObj.storyId) ;
                                 //testBox.innerHTML = " x:" + Math.round(child.x) + "<br/>y: " + Math.round(child.y);
                                 sceneText.setText(myScene.txtStr);
                                 sceneText.x = thisX - 380;
@@ -981,10 +988,13 @@ App.prototype.start = function () {
               //    cHeight = 520; //canvas height
         var cW = Math.round(cWidth /2);
         var cH = Math.round(cHeight /2);
-
+        // passed parameters: coordX, coordY - these are for a room center coordinates
+        npcGroup = scene.physics.add.group({
+            immovable: true
+        });
       arrAllStories = [
           {
-              storyId: 1,
+              storyId: 0,
               rmCoord: { x: 0, y: 1 }, //800:520
               nextScene: 0,
               lastScene: 8,
@@ -992,6 +1002,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 0,
                       spriteId: 0,
+                      objType: 'DECORATION',
+                      npcName: 'compDesk1',
                       animKey: 'compDeskLock',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
@@ -1007,6 +1019,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 1,
                       spriteId: 1,
+                      objType: 'NPC',
+                      npcName: 'YellowDoc',
                       animKey: 'walkLeft',
                       moveTo: 'LEFT',
                       vectorXY: { x: -1, y: 0 },
@@ -1023,6 +1037,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 2,
                       spriteId: 0,
+                      objType: 'DECORATION',
+                      npcName: 'compDesk1',
                       animKey: 'compDeskOpen',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
@@ -1038,6 +1054,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 3,
                       spriteId: 1,
+                      objType: 'NPC',
+                      npcName: 'YellowDoc',
                       animKey: 'walkRight',
                       moveTo: 'RIGHT',
                       vectorXY: { x: 1, y: 0 },
@@ -1053,6 +1071,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 4,
                       spriteId: 4,
+                      objType: 'DECORATION',
+                      npcName: 'cafeTable',
                       animKey: 'cafeTableBrownWithChairFood',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 1 },
@@ -1068,6 +1088,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 5,
                       spriteId: 1,
+                      objType: 'NPC',
+                      npcName: 'YellowDoc',
                       animKey: 'walkUp',
                       moveTo: 'DOWN',
                       vectorXY: { x: 0, y: 1 },
@@ -1083,6 +1105,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 6,
                       spriteId: 2,
+                      objType: 'NPC',
+                      npcName: 'Joker',
                       animKey: 'walkDownHSolo',
                       moveTo: 'UP',
                       vectorXY: { x: 0, y: -1 },
@@ -1098,6 +1122,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 7,
                       spriteId: 3,
+                      objType: 'NPC',
+                      npcName: 'JokerPhone',
                       animKey: 'typingLeftHSolo',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
@@ -1113,6 +1139,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 8,
                       spriteId: 3,
+                      objType: 'NPC',
+                      npcName: 'JokerPhone',
                       animKey: 'HSoloPhotoLeft',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
@@ -1126,16 +1154,19 @@ App.prototype.start = function () {
                       lastAnimKey: 'HSoloStay'
                   }
               ]
-          },
+          }
+          ,
           {
-              storyId: 2,
-              rmCoord: { x: 1, y: 0 }, //800:520
+              storyId: 1,
+              rmCoord: { x: 1, y: 0 },
               nextScene: 0,
               lastScene: 8,
               sceneList: [
                   {
                       sceneId: 0,
                       spriteId: 0,
+                      objType: 'DECORATION',
+                      npcName: 'compDesk1',
                       animKey: 'compDeskLock',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
@@ -1151,6 +1182,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 1,
                       spriteId: 1,
+                      objType: 'NPC',
+                      npcName: 'YellowDoc',
                       animKey: 'walkLeft',
                       moveTo: 'LEFT',
                       vectorXY: { x: -1, y: 0 },
@@ -1167,6 +1200,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 2,
                       spriteId: 0,
+                      objType: 'DECORATION',
+                      npcName: 'compDesk1',
                       animKey: 'compDeskOpen',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
@@ -1182,6 +1217,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 3,
                       spriteId: 1,
+                      objType: 'NPC',
+                      npcName: 'YellowDoc',
                       animKey: 'walkRight',
                       moveTo: 'RIGHT',
                       vectorXY: { x: 1, y: 0 },
@@ -1197,6 +1234,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 4,
                       spriteId: 4,
+                      objType: 'DECORATION',
+                      npcName: 'cafeTable',
                       animKey: 'cafeTableBrownWithChairFood',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 1 },
@@ -1212,6 +1251,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 5,
                       spriteId: 1,
+                      objType: 'NPC',
+                      npcName: 'YellowDoc',
                       animKey: 'walkUp',
                       moveTo: 'DOWN',
                       vectorXY: { x: 0, y: 1 },
@@ -1227,6 +1268,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 6,
                       spriteId: 2,
+                      objType: 'NPC',
+                      npcName: 'Joker',
                       animKey: 'walkDownHSolo',
                       moveTo: 'UP',
                       vectorXY: { x: 0, y: -1 },
@@ -1242,6 +1285,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 7,
                       spriteId: 3,
+                      objType: 'NPC',
+                      npcName: 'JokerPhone',
                       animKey: 'typingLeftHSolo',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
@@ -1257,6 +1302,8 @@ App.prototype.start = function () {
                   {
                       sceneId: 8,
                       spriteId: 3,
+                      objType: 'NPC',
+                      npcName: 'JokerPhone',
                       animKey: 'HSoloPhotoLeft',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
@@ -1273,11 +1320,8 @@ App.prototype.start = function () {
           }
       ];
 
-        console.log("==> arrAllStories:  ", arrAllStories);
-      // passed parameters: coordX, coordY - these are for a room center coordinates
-      npcGroup = scene.physics.add.group({
-          immovable: true
-      });
+     console.log("==> arrAllStories:  ", arrAllStories);
+
       arrScenes = [
         {
           sceneId: 0,
@@ -1495,8 +1539,8 @@ App.prototype.start = function () {
             var sceneCoordX = myObj.npcCoordX;
             var sceneCoordY = myObj.npcCoordY;
 
-            console.log("===> npcName (sceneAnimGrp[",i,"])",npcName);
-            console.log("===> npcId (sceneAnimGrp[",i,"])",npcId);
+            // console.log("===> npcName (sceneAnimGrp[",i,"])",npcName);
+            // console.log("===> npcId (sceneAnimGrp[",i,"])",npcId);
 
           for (let m=0; m < myObj.animList.length; m++ ) {
             //reading animation parameters:
@@ -1513,32 +1557,73 @@ App.prototype.start = function () {
                   frameRate: animFrameRate,
                   repeat: animRepeat
               });
+              console.log("===> sceneAnimGrp[", i," ]  => animKey (myObj.animList[",m,"])",animKey);
+
           }
             // create an object and place it to the group:
             // use myObj.standFace to set standing posture:
-            var myDude = npcGroup.create(sceneCoordX , sceneCoordY, npcDefaultKey).setScale(1);
-            myDude.npcDefaultKey = npcDefaultKey;
-            console.log("myDude.npcDefaultKey: ", myDude.npcDefaultKey );
-            //activate default animation:
-
-            myDude.npcName = npcName;
-            myDude.npcId = npcId;
-            myDude.moveVector = 0;
-            myDude.isActive = objActive;
-            myDude.objType = objType;
-            myDude.npcDefaultKey = npcDefaultKey;
-            myDude.animList = myObj.animList;
-            if (myDude.objType === 'DECORATION') {
-                myDude.anims.play(npcDefaultKey, false);
-            } else {
-                myDude.anims.play(npcDefaultKey, true);
-                myDude.disableBody(false, true);
-            }
+            // var myDude = npcGroup.create(sceneCoordX , sceneCoordY, npcDefaultKey).setScale(1);
+            // myDude.npcDefaultKey = npcDefaultKey;
+            // console.log("myDude.npcDefaultKey: ", myDude.npcDefaultKey );
+            // //activate default animation:
+            //
+            // myDude.npcName = npcName;
+            // myDude.npcId = npcId;
+            // myDude.moveVector = 0;
+            // myDude.isActive = objActive;
+            // myDude.objType = objType;
+            // myDude.npcDefaultKey = npcDefaultKey;
+            // myDude.animList = myObj.animList;
+            // if (myDude.objType === 'DECORATION') {
+            //     myDude.anims.play(npcDefaultKey, false);
+            // } else {
+            //     myDude.anims.play(npcDefaultKey, true);
+            //     myDude.disableBody(false, true);
+            // }
         }
           // ************ ========== : animNPCGroup End ============ ************
       }
+
+        for (let j=0; j < arrAllStories.length; j++) {  // **** reading a list of stories and adding npcGroup.children
+            var aStory = arrAllStories[j].sceneList;
+            for (let m=0; m < aStory.length; m++) {
+                var isUniqueSpriteId = true;
+                var aSt = aStory[m];
+
+                npcGroup.children.iterate(child => {
+                    if (child.npcId === aSt.spriteId + "_" + arrAllStories[j].storyId) {
+                        isUniqueSpriteId = false;
+                    }
+                });
+                if (isUniqueSpriteId) {
+                    var objSprite = npcGroup.create(aSt.startXY.x + (arrAllStories[j].rmCoord.x * cWidth) , aSt.startXY.y
+                                    + (arrAllStories[j].rmCoord.y * cHeight) , aSt.animKey + "_" + arrAllStories[j].storyId + "_" + aSt.sceneId).setScale(1);
+                    objSprite.npcDefaultKey = aSt.npcName + "_" + aSt.animKey;
+                    objSprite.spriteId = aSt.spriteId;
+                    objSprite.npcName = aSt.npcName;
+                    objSprite.npcId = aSt.spriteId + "_" + arrAllStories[j].storyId;
+                    // objSprite.moveVector = aSt.vectorXY;
+                    objSprite.objType = aSt.objType;
+                    if (objSprite.objType === 'DECORATION') {
+                        objSprite.anims.play(objSprite.npcDefaultKey , false);
+                    } else {
+                        objSprite.anims.play(objSprite.npcDefaultKey , true);
+                        objSprite.disableBody(false, true);
+                    }
+                    //console.log("------->>> objSprite: ", (aSt.startXY.x + (arrAllStories[j].rmCoord.x * cWidth)) , (aSt.startXY.y  + (arrAllStories[j].rmCoord.y * cHeight)) , aSt.animKey);
+                    console.log("-->>> objSpriteProps: ", objSprite.npcId, " / " , objSprite.npcName, " / ", objSprite.npcDefaultKey, " animKey: ",aSt.animKey, " XY: ", aSt.startXY);
+
+                }
+            }
+        }  // **** Done reading a list of stories and adding npcGroup.children ****
+
         var jsonAnim = scene.anims.toJSON(); //Export animation to JSON
         console.log("!!!!***===>  Game jsonAnim: ", jsonAnim );
+        let k=0;
+        npcGroup.children.iterate(child => {
+            console.log("!!!!***===>  npcGroup.child[" + k + "]: ", child.npcName, " npcId: ", child.npcId, " npcDefaultKey:", child.npcDefaultKey );
+            k++;
+        });
     }
 
 /////////questions functionality
