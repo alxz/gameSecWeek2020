@@ -45,8 +45,7 @@ App.prototype.start = function () {
     var maxRoomCountX;    var maxRoomCountY;
     var hospitalBed;
     var totalQestionsAnswered = 0;    var totalQestionsAsked = 0;    var listofquestions = "";
-    var doorsHolder = [];
-    var sceneTxtHolder = [];
+    var currentScene = { isActive: false, sceneContent: null }; // current Scene storage
     var music;    var doorOpen;    var soundStep;    var pickupKey;    var soundOk;
     var soundFail;    var soundFinal;    var gameState;    var isSurveySent = false;    var langLabel = '';
 
@@ -305,163 +304,164 @@ App.prototype.start = function () {
         let pX = Math.floor(thisX / cWidth);
         let pY = Math.floor(thisY / cHeight);
         let noBreak = false;
-    //lets iterate over the array of scripted scenes:
-        for (let idx = 0; idx < arrAllStories.length; idx++) {
-            var myObj = arrAllStories[1]; //arrAllStories[idx];
-            var myX = myObj.rmCoord.x;
-            var myY = myObj.rmCoord.y;
+        // currentScene = { isActive: false, sceneContent: null }; /// ======= <***> ========
+        //if there is already an action running do not seek for another scene:
+        if (currentScene.isActive)  {
+            var curtScene = currentScene.sceneContent.nextScene;
+            var lastScene = currentScene.sceneContent.lastScene;
+            let myX = currentScene.sceneContent.rmCoord.x;
+            let myY = currentScene.sceneContent.rmCoord.y;
+            let i = curtScene;
+            if ( i <= lastScene) {
+                    var myScene = currentScene.sceneContent.sceneList[i];
+                    npcGroup.children.iterate(child => {
+                        if ( child.npcId === (myScene.spriteId + "_" + currentScene.sceneContent.storyId) ) {
+                            testBoxDiv.innerHTML = "child.npcId:" + child.npcId + " / "
+                                + (myScene.spriteId + "_" + currentScene.sceneContent.storyId)
+                                + "; Coord: myX: " + myX + " myY: " + myY;
+                            //console.log("==> child obj: ", child);
+                            // testBox.innerHTML = "npcId:" + child.npcId + "<br/>"
+                            //     + "myScene:" + myScene.spriteId + "<br/>"
+                            //     + "myScene+:" + (myScene.spriteId + "_" + currentScene.sceneContent.storyId) ;
+                            //testBox.innerHTML = " x:" + Math.round(child.x) + "<br/>y: " + Math.round(child.y);
+                            sceneText.setText(myScene.txtStr);
+                            sceneText.x = child.x - 60; //(myX) * cWidth + 30;
+                            sceneText.y = child.y - 100; //(myY) * cHeight + 300;
+                            if ( myScene.initRead === false) {
+                                myScene.initRead = true;
+                                //child.SetXY = { x: myScene.startXY.x, y: myScene.startXY.y } ;
+                                child.x = currentScene.sceneContent.sceneList[i].startXY.x + (myX * cWidth);
+                                child.y = currentScene.sceneContent.sceneList[i].startXY.y + (myY * cHeight);
+                                child.enableBody(true, child.x,child.y, true, true);
+                            }
+                            child.anims.play(child.npcName + "_" + myScene.animKey, true);
+                            switch (myScene.moveTo) {
+                                case "NO":
+                                    //we stand up
+                                    child.setVelocityX(0);
+                                    child.setVelocityY(0);
 
-            // we get in only if this is the same room coordinates:
-            if ( myX === pX && myY === pY ) {
-                var curtScene = myObj.nextScene;
-                var lastScene = myObj.lastScene;
-                // testBoxDiv.innerHTML = "myObj.rmCoord: " + myObj.rmCoord.x + "/" +  myObj.rmCoord.y +
-                //     " Player pX/pY: " + pX + "/" +  pY;
-                let i = curtScene;
-                if ( i <= lastScene) {
-                    // for (let i=0; i< myObj.sceneList.length; i++)
-                    {
-                        var myScene = myObj.sceneList[i];
-                        npcGroup.children.iterate(child => {
-
-                            if ( child.npcId === (myScene.spriteId + "_" + myObj.storyId) ) {
-                                //testBoxDiv.innerHTML = "child.npcId:" + child.npcId + " / " + (myScene.spriteId + "_" + myObj.storyId);
-                                //console.log("==> child obj: ", child);
-                                testBox.innerHTML = "npcId:" + child.npcId + "<br/>"
-                                    + "myScene:" + myScene.spriteId + "<br/>"
-                                    + "myScene+:" + (myScene.spriteId + "_" + myObj.storyId) ;
-                                //testBox.innerHTML = " x:" + Math.round(child.x) + "<br/>y: " + Math.round(child.y);
-                                sceneText.setText(myScene.txtStr);
-                                sceneText.x = thisX - 380;
-                                sceneText.y = thisY + 200;
-                                if ( myScene.initRead === false) {
-                                    myScene.initRead = true;
-                                    //child.SetXY = { x: myScene.startXY.x, y: myScene.startXY.y } ;
-                                    child.x = myObj.sceneList[i].startXY.x + (myX * cWidth);
-                                    child.y = myObj.sceneList[i].startXY.y + (myY * cHeight);
-                                    child.enableBody(true, child.x,child.y, true, true);
-                                }
-                                child.anims.play(child.npcName + "_" + myScene.animKey, true);
-                                switch (myScene.moveTo) {
-                                    case "NO":
-                                        //we stand up
+                                    myScene.moveTo = "";
+                                    setTimeout(myFunction => {
+                                        // console.log("==> child XY x: ", child.x, " y:", child.y);
+                                        // console.log("==> myScene.txtStr: ", myScene.txtStr);
+                                        currentScene.sceneContent.nextScene ++;
+                                        // console.log("==> curtScene: " , curtScene, " lastScene: ", lastScene);
                                         child.setVelocityX(0);
                                         child.setVelocityY(0);
+                                        sceneText.setText("");
+                                        sceneText.x = thisX - 380;
+                                        sceneText.y = thisY + 200;
+                                        //console.log("==> curtScene NO direction: " , curtScene, " lastScene: ", lastScene);
 
-                                        myScene.moveTo = "";
-                                        setTimeout(myFunction => {
-                                            // console.log("==> child XY x: ", child.x, " y:", child.y);
-                                            // console.log("==> myScene.txtStr: ", myScene.txtStr);
-                                            myObj.nextScene ++;
-                                            // console.log("==> curtScene: " , curtScene, " lastScene: ", lastScene);
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-
-                                            console.log("==> curtScene NO direction: " , curtScene, " lastScene: ", lastScene);
-                                            console.log("**** ==> myObj json object is : ", myObj);
-                                            if (myScene.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false);// child.anims.play(child.npcDefaultKey, true);
-                                            }
-
-                                        }, myScene.timeFrame * 1000);
-
-                                        break;
-                                    case "LEFT":
-                                        // we move left
-                                        child.setVelocityX(-100);
-
-                                        if ( child.x < (myScene.endXY.x + (myX * cWidth))) {
-                                           myObj.nextScene ++;
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-
-                                            if (myScene.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
-                                            }
-                                         }
-                                        break;
-                                    case "RIGHT":
-                                        // we move right
-                                        child.setVelocityX(100);
-
-                                        if ( child.x > (myScene.endXY.x + (myX * cWidth))) {
-                                            myObj.nextScene ++;
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-                                            if (myScene.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
-                                            }
+                                        if (myScene.removeSprite) {
+                                            child.disableBody(true, true); // this is to remove the key(object) from the scene
+                                        } else {
+                                            child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false);// child.anims.play(child.npcDefaultKey, true);
                                         }
-                                        break;
-                                    case "DOWN":
-                                        // we move down
-                                        child.setVelocityY(100);
-                                        if ( child.y > (myScene.endXY.y + (myY * cHeight))) {
-                                            myObj.nextScene ++;
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-                                            if (myObj.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
-                                            }
-                                        }
-                                        break;
-                                    case "UP":
-                                        // we move up
-                                        child.setVelocityY(-100);
-                                        if ( child.y < (myScene.endXY.y + (myY * cHeight))) {
-                                            myObj.nextScene ++;
-                                            child.setVelocityX(0);
-                                            child.setVelocityY(0);
-                                            sceneText.setText("");
-                                            sceneText.x = thisX - 380;
-                                            sceneText.y = thisY + 200;
-                                            if (myScene.removeSprite) {
-                                                child.disableBody(true, true); // this is to remove the key(object) from the scene
-                                            } else {
-                                                child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
-                                            }
-                                        }
-                                        break;
-                                    default:
+                                    }, myScene.timeFrame * 1000);
 
-                                    // default action is:
-                                }
-                                //testBox.innerHTML = " S:" +curtScene;
+                                    break;
+                                case "LEFT":
+                                    // we move left
+                                    child.setVelocityX(-100);
+
+                                    if ( child.x < (myScene.endXY.x + (myX * cWidth))) {
+                                        currentScene.sceneContent.nextScene ++;
+                                        child.setVelocityX(0);
+                                        child.setVelocityY(0);
+                                        sceneText.setText("");
+                                        sceneText.x = thisX - 380;
+                                        sceneText.y = thisY + 200;
+
+                                        if (myScene.removeSprite) {
+                                            child.disableBody(true, true); // this is to remove the key(object) from the scene
+                                        } else {
+                                            child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
+                                        }
+                                    }
+                                    break;
+                                case "RIGHT":
+                                    // we move right
+                                    child.setVelocityX(100);
+
+                                    if ( child.x > (myScene.endXY.x + (myX * cWidth))) {
+                                        currentScene.sceneContent.nextScene ++;
+                                        child.setVelocityX(0);
+                                        child.setVelocityY(0);
+                                        sceneText.setText("");
+                                        sceneText.x = thisX - 380;
+                                        sceneText.y = thisY + 200;
+                                        if (myScene.removeSprite) {
+                                            child.disableBody(true, true); // this is to remove the key(object) from the scene
+                                        } else {
+                                            child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
+                                        }
+                                    }
+                                    break;
+                                case "DOWN":
+                                    // we move down
+                                    child.setVelocityY(100);
+                                    if ( child.y > (myScene.endXY.y + (myY * cHeight))) {
+                                        currentScene.sceneContent.nextScene ++;
+                                        child.setVelocityX(0);
+                                        child.setVelocityY(0);
+                                        sceneText.setText("");
+                                        sceneText.x = thisX - 380;
+                                        sceneText.y = thisY + 200;
+                                        if (myScene.removeSprite) {
+                                            child.disableBody(true, true); // this is to remove the key(object) from the scene
+                                        } else {
+                                            child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
+                                        }
+                                    }
+                                    break;
+                                case "UP":
+                                    // we move up
+                                    child.setVelocityY(-100);
+                                    if ( child.y < (myScene.endXY.y + (myY * cHeight))) {
+                                        currentScene.sceneContent.nextScene ++;
+                                        child.setVelocityX(0);
+                                        child.setVelocityY(0);
+                                        sceneText.setText("");
+                                        sceneText.x = thisX - 380;
+                                        sceneText.y = thisY + 200;
+                                        if (myScene.removeSprite) {
+                                            child.disableBody(true, true); // this is to remove the key(object) from the scene
+                                        } else {
+                                            child.anims.play(child.npcName + "_" + myScene.lastAnimKey, false); //set last animation key
+                                        }
+                                    }
+                                    break;
+                                default:
+                                // default action is:
                             }
-                        })
-                        //////////
-                    }
-                }  else {
-                    // if all scene activities done we show questions:
-                    doorkeys.children.iterate(child => {
-                        if ( child.roomCoord.x === pX && child.roomCoord.y === pY) {
-                            //myX === pX && myY === pY
-                            child.enableBody(true, child.initCoord.x, child.initCoord.y, true, true);
+                            //testBox.innerHTML = " S:" +curtScene;
                         }
                     })
+            }  else {
+                // if all scene activities done we show questions:
+                doorkeys.children.iterate(child => {
+                    if ( child.roomCoord.x === currentScene.sceneContent.rmCoord.x && child.roomCoord.y === currentScene.sceneContent.rmCoord.y) {
+                        //myX === pX && myY === pY
+                        child.enableBody(true, child.initCoord.x, child.initCoord.y, true, true);
+                    }
+                });
+                currentScene.isActive = false;
+            }
+        } else {         //lets iterate over the array of scripted scenes:
+            for (let r = 0; r < arrAllStories.length; r++) {
+                var myObj = arrAllStories[r];
+                testBoxDiv.innerHTML = "myObj.rmCoord: " + myObj.rmCoord.x + "/" +  myObj.rmCoord.y +
+                    " Player pX/pY: " + pX + "/" +  pY;
+                // we get in only if this is the same room coordinates:
+                if ( (myObj.rmCoord.x === pX) && (myObj.rmCoord.y === pY) ) {
+                    currentScene.isActive = true;
+                    currentScene.sceneContent = arrAllStories[r];
                 }
             }
         }
+
     }
 
     function npcHitTheWall(npc, wall) {
@@ -1028,7 +1028,7 @@ App.prototype.start = function () {
                       endXY: { x: 320, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
+                      txtStr: ' Employee: I need to find \r\n my patient data...',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'standFace'
@@ -1039,20 +1039,38 @@ App.prototype.start = function () {
                       spriteId: 0,
                       objType: 'DECORATION',
                       npcName: 'compDesk1',
-                      animKey: 'compDeskOpen',
+                      animKey: 'compDeskLock',
                       moveTo: 'NO',
                       vectorXY: { x: 0, y: 0 },
                       startXY: { x: 280, y: 200 },
                       endXY: { x: 280, y: 200 },
-                      timeFrame: 10,
+                      timeFrame: 5,
                       txtLabel: 'EmplSpeech',
-                      txtStr: ' Computer: Please enter your user name and password!',
+                      txtStr: ' Computer: Please enter \r\n  your user name and password!',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'compDeskOpen'
                   },
                   {
                       sceneId: 3,
+                      spriteId: 1,
+                      objType: 'NPC',
+                      npcName: 'YellowDoc',
+                      animKey: 'walkLeft',
+                      moveTo: 'NO',
+                      vectorXY: { x: 0, y: 0 },
+                      startXY: { x: 320, y: 200 }, //{ x: 650, y: 720 }
+                      endXY: { x: 320, y: 200 },
+                      timeFrame: 5,
+                      txtLabel: 'EmplSpeech',
+                      txtStr: ' Employee: Sure, here it is! \r\n Adding some really important \r\n  patient data... Done!',
+                      initRead: false,
+                      removeSprite: true,
+                      lastAnimKey: 'standFace'
+
+                  },
+                  {
+                      sceneId: 4,
                       spriteId: 1,
                       objType: 'NPC',
                       npcName: 'YellowDoc',
@@ -1063,27 +1081,10 @@ App.prototype.start = function () {
                       endXY: { x: 650, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
+                      txtStr: ' Employee: Oh, its almost noon! \r\n  I need to go to \r\n  the cafeteria now!',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'standFace'
-                  },
-                  {
-                      sceneId: 4,
-                      spriteId: 4,
-                      objType: 'DECORATION',
-                      npcName: 'cafeTable',
-                      animKey: 'cafeTableBrownWithChairFood',
-                      moveTo: 'NO',
-                      vectorXY: { x: 0, y: 1 },
-                      startXY: { x: 650, y: 340 },
-                      endXY: { x: 650, y: 340 },
-                      timeFrame: 1,
-                      txtLabel: 'Table',
-                      txtStr: '',
-                      initRead: false,
-                      removeSprite: false,
-                      lastAnimKey: 'cafeTableBrownWithChairFood'
                   },
                   {
                       sceneId: 5,
@@ -1097,7 +1098,7 @@ App.prototype.start = function () {
                       endXY: { x: 650, y: 330 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: Quickly! \r\n   I need to go to the cafeteria now!',
+                      txtStr: ' Employee: I wil be back soon \r\n  .. in a 15 minutes',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'standFace'
@@ -1131,7 +1132,7 @@ App.prototype.start = function () {
                       endXY: { x: 320, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'Joker',
-                      txtStr: ' Joker: Welcome! \r\n   Lets see what is there!!!',
+                      txtStr: ' Joker: Welcome dear friend! \r\n Lets see what is there!!!',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'typingLeftHSolo'
@@ -1148,7 +1149,7 @@ App.prototype.start = function () {
                       endXY: { x: 320, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'Joker',
-                      txtStr: ' Joker: I wil take some photos... \r\n  Thats it, all done!',
+                      txtStr: ' Joker: I wil take here \r\n  some photos... \r\n  Thats it, cool!',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'HSoloStay'
@@ -1160,7 +1161,7 @@ App.prototype.start = function () {
               storyId: 1,
               rmCoord: { x: 1, y: 0 },
               nextScene: 0,
-              lastScene: 8,
+              lastScene: 7,
               sceneList: [
                   {
                       sceneId: 0,
@@ -1191,7 +1192,7 @@ App.prototype.start = function () {
                       endXY: { x: 320, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: I need to find my patient data and \r\n    add some important information urgently...',
+                      txtStr: ' Employee: I need to find \r\n my patient data and \r\n  add some important information...',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'standFace'
@@ -1209,7 +1210,7 @@ App.prototype.start = function () {
                       endXY: { x: 280, y: 200 },
                       timeFrame: 10,
                       txtLabel: 'EmplSpeech',
-                      txtStr: ' Computer: Please enter your user name and password!',
+                      txtStr: ' Computer: Please enter \r\n your user name and password!',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'compDeskOpen'
@@ -1226,30 +1227,13 @@ App.prototype.start = function () {
                       endXY: { x: 650, y: 200 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: Oh, its almost noon! \r\n   I need to go to the cafeteria now!',
+                      txtStr: ' Employee: Oh, its almost noon! \r\n I need to go to the cafeteria now!',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'standFace'
                   },
                   {
                       sceneId: 4,
-                      spriteId: 4,
-                      objType: 'DECORATION',
-                      npcName: 'cafeTable',
-                      animKey: 'cafeTableBrownWithChairFood',
-                      moveTo: 'NO',
-                      vectorXY: { x: 0, y: 1 },
-                      startXY: { x: 650, y: 340 },
-                      endXY: { x: 650, y: 340 },
-                      timeFrame: 1,
-                      txtLabel: 'Table',
-                      txtStr: '',
-                      initRead: false,
-                      removeSprite: false,
-                      lastAnimKey: 'cafeTableBrownWithChairFood'
-                  },
-                  {
-                      sceneId: 5,
                       spriteId: 1,
                       objType: 'NPC',
                       npcName: 'YellowDoc',
@@ -1260,13 +1244,13 @@ App.prototype.start = function () {
                       endXY: { x: 650, y: 330 },
                       timeFrame: 5,
                       txtLabel: 'EmplSpeech',
-                      txtStr: ' Employee: Quickly! \r\n   I need to go to the cafeteria now!',
+                      txtStr: ' Employee: Quickly! \r\n  I need to go to the cafeteria now!',
                       initRead: false,
                       removeSprite: false,
                       lastAnimKey: 'standFace'
                   },
                   {
-                      sceneId: 6,
+                      sceneId: 5,
                       spriteId: 2,
                       objType: 'NPC',
                       npcName: 'Joker',
@@ -1283,7 +1267,7 @@ App.prototype.start = function () {
                       lastAnimKey: 'HSoloStandUp'
                   },
                   {
-                      sceneId: 7,
+                      sceneId: 6,
                       spriteId: 3,
                       objType: 'NPC',
                       npcName: 'JokerPhone',
@@ -1300,7 +1284,7 @@ App.prototype.start = function () {
                       lastAnimKey: 'typingLeftHSolo'
                   },
                   {
-                      sceneId: 8,
+                      sceneId: 7,
                       spriteId: 3,
                       objType: 'NPC',
                       npcName: 'JokerPhone',
@@ -1524,7 +1508,6 @@ App.prototype.start = function () {
         // going over an array: arrScenes
         var sceneAnimGrp = arrScenes[k].animNPCGroup;
         console.log("===> arrScenes Objects[",k,"]",arrScenes[k]);
-        //sceneTxtHolder.push(arrScenes[k].animText);
 
         // ************ ========== animNPCGroup start: ============ ************
         for (let i=0; i < sceneAnimGrp.length; i++) {
@@ -1585,6 +1568,7 @@ App.prototype.start = function () {
       }
 
         for (let j=0; j < arrAllStories.length; j++) {  // **** reading a list of stories and adding npcGroup.children
+            //let arrX = arrAllStories[j].rmCoord.x; let arrY = arrAllStories[j].rmCoord.y;
             var aStory = arrAllStories[j].sceneList;
             for (let m=0; m < aStory.length; m++) {
                 var isUniqueSpriteId = true;
@@ -1618,12 +1602,13 @@ App.prototype.start = function () {
         }  // **** Done reading a list of stories and adding npcGroup.children ****
 
         var jsonAnim = scene.anims.toJSON(); //Export animation to JSON
-        console.log("!!!!***===>  Game jsonAnim: ", jsonAnim );
+        console.log("***===>  Game jsonAnim: ", jsonAnim );
         let k=0;
         npcGroup.children.iterate(child => {
-            console.log("!!!!***===>  npcGroup.child[" + k + "]: ", child.npcName, " npcId: ", child.npcId, " npcDefaultKey:", child.npcDefaultKey );
+            console.log("*** ===>  npcGroup.child[" + k + "]: ", child.npcName, " npcId: ", child.npcId, " npcDefaultKey:", child.npcDefaultKey );
             k++;
         });
+        console.log("}}}} Scene per Room Array arrAllStories: ",arrAllStories );
     }
 
 /////////questions functionality
