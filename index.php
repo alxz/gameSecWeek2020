@@ -91,14 +91,19 @@
    <div id="mainDiv" class="classmainDiv">
      <div id="phaserDiv" class="classPhaserDiv">
          <canvas></canvas>
+         <div id="subtitles" class="subtitlesPanel">
+             <div> text 1 </div>
+             <div> text 2 </div>
+             <div> text 3 </div>
+         </div>
      </div>
        <br/><br/>
      <div id="mazeWDrsRmsMap" class="scoreAndMiniMap-container">
        <div id="divScoreText" class="scoreText-container"></div>
        <div id="divMiniMapText" class="scoreText-container"></div>
        <div id="divMiniMap" class="miniMap-container"></div>
-
      </div>
+
    </div>
    <div class="mapsCont">
      <div id="mazeMap" class="mazeContainerLeft"></div>

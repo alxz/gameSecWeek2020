@@ -59,7 +59,30 @@ App.prototype.start = function () {
     const isSilentCheckBox = document.getElementById("silentCheckBox");
     const testBox = document.getElementById("testBox");
     const testBoxDiv = document.getElementById("testBoxDiv");
+    const subtitlesPannel = document.getElementById("subtitles");
+    var subtitles = [];
+    var addSubtitles = function (newText) {
+        let found = false;
+        for (let i = 0; i < subtitles.length; i++ ) {
+             let txt = subtitles[i];
+             if (txt === newText && !found) {
+                 found = true;
+             }
+        }
+        if (!found) {
+            let text = "";
+            subtitles[subtitles.length] = newText;
+            for (let i = 0; i < subtitles.length; i++ ) {
+                text += "<br/>" + subtitles[i];
+            }
+            subtitlesPannel.innerHTML = text;
+        }
+    }
 
+    var clearSubtitles = function () {
+        subtitles = [];
+        addSubtitles("");
+    }
 
     var tryUserIUN = document.getElementById("userIUNBox");
     if (tryUserIUN != null) {
@@ -327,12 +350,14 @@ App.prototype.start = function () {
                             sceneText.setText(myScene.txtStr);
                             sceneText.x = child.x - 60; //(myX) * cWidth + 30;
                             sceneText.y = child.y - 120; //(myY) * cHeight + 300;
+
                             if ( myScene.initRead === false) {
                                 myScene.initRead = true;
                                 //child.SetXY = { x: myScene.startXY.x, y: myScene.startXY.y } ;
                                 child.x = currentScene.sceneContent.sceneList[i].startXY.x + (myX * cWidth);
                                 child.y = currentScene.sceneContent.sceneList[i].startXY.y + (myY * cHeight);
                                 child.enableBody(true, child.x,child.y, true, true);
+                                subtitlesPannel.innerHTML = subtitlesPannel.innerHTML + "<br/>" + myScene.txtStr;
                             }
                             child.anims.play(child.npcName + "_" + myScene.animKey, true);
                             switch (myScene.moveTo) {
@@ -454,6 +479,7 @@ App.prototype.start = function () {
                 currentScene.isActive = false;
             }
         } else {         //lets iterate over the array of scripted scenes:
+            subtitlesPannel.innerHTML = "";
             for (let r = 0; r < arrAllStories.length; r++) {
                 var myObj = arrAllStories[r];
                 testBoxDiv.innerHTML = "myObj.rmCoord: " + myObj.rmCoord.x + "/" +  myObj.rmCoord.y +
