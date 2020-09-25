@@ -5,7 +5,7 @@ function getAllStories() {
             rmCoord: { x: 0, y: 1 }, //800:520
             nextScene: 0,
             lastScene: 8,
-            questCoord: {x: 400, y: 350 },
+            questCoord: {x: 600, y: 350 },
             sceneList: [
                 {
                     sceneId: 0,
@@ -163,20 +163,36 @@ function getAllStories() {
                     lastAnimKey: 'HSoloStay'
                 }
             ]
-        }
-        ,
+        },
         {
             storyId: 1,
             rmCoord: { x: 1, y: 0 },
             nextScene: 0,
-            lastScene: 3,
-            questCoord: {x: 400, y: 350 },
+            lastScene: 4,
+            questCoord: {x: 580, y: 350 },
             sceneList: [
                 {
                     sceneId: 0,
-                    spriteId: 0,
+                    spriteId: 5,
                     objType: 'DECORATION',
-                    npcName: 'cafeTable',
+                    npcName: 'cafeTableChairs',
+                    animKey: 'cafeTableBrownWithChairs',
+                    moveTo: 'NO',
+                    vectorXY: { x: 0, y: 0 },
+                    startXY: { x: 500, y: 180 },
+                    endXY: { x: 500, y: 150 },
+                    timeFrame: 1,
+                    txtLabel: 'cafeTable',
+                    txtStr: '',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'cafeTableBrownWithChairs'
+                },
+                {
+                    sceneId: 1,
+                    spriteId: 4,
+                    objType: 'DECORATION',
+                    npcName: 'cafeTableFood',
                     animKey: 'cafeTableBrownWithChairFood',
                     moveTo: 'NO',
                     vectorXY: { x: 0, y: 0 },
@@ -190,7 +206,7 @@ function getAllStories() {
                     lastAnimKey: 'cafeTableBrownWithChairFood'
                 },
                 {
-                    sceneId: 1,
+                    sceneId: 2,
                     spriteId: 1,
                     objType: 'NPC',
                     npcName: 'YellowDoc',
@@ -208,8 +224,8 @@ function getAllStories() {
 
                 },
                 {
-                    sceneId: 2,
-                    spriteId: 5,
+                    sceneId: 3,
+                    spriteId: 6,
                     objType: 'NPC',
                     npcName: 'YellowDocTwo',
                     animKey: 'walkRight',
@@ -225,8 +241,8 @@ function getAllStories() {
                     lastAnimKey: 'standFace'
                 },
                 {
-                    sceneId: 3,
-                    spriteId: 2,
+                    sceneId: 4,
+                    spriteId: 6,
                     objType: 'NPC',
                     npcName: 'YellowDocTwo',
                     animKey: 'stayRight',
@@ -299,14 +315,31 @@ function getAllStories() {
             storyId: 2,
             rmCoord: { x: 0, y: 2 },
             nextScene: 0,
-            lastScene: 3,
-            questCoord: {x: 400, y: 350 },
+            lastScene: 4,
+            questCoord: {x: 580, y: 350 },
             sceneList: [
                 {
                     sceneId: 0,
-                    spriteId: 0,
+                    spriteId: 5,
                     objType: 'DECORATION',
-                    npcName: 'cafeTable',
+                    npcName: 'cafeTableChairs',
+                    animKey: 'cafeTableBrownWithChairs',
+                    moveTo: 'NO',
+                    vectorXY: { x: 0, y: 0 },
+                    startXY: { x: 500, y: 180 },
+                    endXY: { x: 400, y: 250 },
+                    timeFrame: 1,
+                    txtLabel: 'cafeTable',
+                    txtStr: ' Somewhere in cafeteria...',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'cafeTableBrownWithChairs'
+                },
+                {
+                    sceneId: 1,
+                    spriteId: 4,
+                    objType: 'DECORATION',
+                    npcName: 'cafeTableFood',
                     animKey: 'cafeTableBrownWithChairFood',
                     moveTo: 'NO',
                     vectorXY: { x: 0, y: 0 },
@@ -339,7 +372,7 @@ function getAllStories() {
                 },
                 {
                     sceneId: 2,
-                    spriteId: 5,
+                    spriteId: 6,
                     objType: 'NPC',
                     npcName: 'YellowDocTwo',
                     animKey: 'walkRight',
@@ -356,7 +389,7 @@ function getAllStories() {
                 },
                 {
                     sceneId: 3,
-                    spriteId: 2,
+                    spriteId: 6,
                     objType: 'NPC',
                     npcName: 'YellowDocTwo',
                     animKey: 'stayRight',
@@ -541,7 +574,7 @@ function getSceneSprites(coordX, coordY) {
                     id: 4,
                     isActive: false,
                     objType: 'DECORATION',
-                    npcName: 'cafeTable',
+                    npcName: 'cafeTableFood',
                     defaultKey: 'cafeTableBrownWithChairFood',
                     npcCoordX : (650),
                     npcCoordY : (860),
@@ -568,6 +601,36 @@ function getSceneSprites(coordX, coordY) {
                 },
                 {
                     id: 5,
+                    isActive: false,
+                    objType: 'DECORATION',
+                    npcName: 'cafeTableChairs',
+                    defaultKey: 'cafeTableBrownWithChairs',
+                    npcCoordX : (100),
+                    npcCoordY : (100),
+                    animList: [
+                        {
+                            key: 'cafeTableBrownEmpty',
+                            frames: { spriteName: 'cafeTableBrown', start: 0, end: 0 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'cafeTableBrownWithChairs',
+                            frames: { spriteName: 'cafeTableBrown', start: 1, end: 1 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'cafeTableBrownWithChairFood',
+                            frames: { spriteName: 'cafeTableBrown', start: 2, end: 2 },
+                            frameRate: 5,
+                            repeat: 1
+                        }
+                    ]
+                },
+
+                {
+                    id: 6,
                     isActive: true,
                     objType: 'NPC',
                     npcName: 'YellowDocTwo',

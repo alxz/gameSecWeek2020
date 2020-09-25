@@ -252,6 +252,7 @@ App.prototype.start = function () {
         this.physics.add.collider(player, doors, null, hitTheDoor, this);
         this.physics.add.collider(player, hospitalBed, null, breakingBad, this);
         this.physics.add.overlap(player, doorkeys, collectKey, null, this);
+        this.physics.add.collider(npcGroup, player, null, playerHitNpc, this);
         music = this.sound.add('theme');
         soundStep = this.sound.add('soundStep');
         doorOpen = this.sound.add('doorOpen');
@@ -357,7 +358,16 @@ App.prototype.start = function () {
                                 child.x = currentScene.sceneContent.sceneList[i].startXY.x + (myX * cWidth);
                                 child.y = currentScene.sceneContent.sceneList[i].startXY.y + (myY * cHeight);
                                 child.enableBody(true, child.x,child.y, true, true);
-                                subtitlesPannel.innerHTML = subtitlesPannel.innerHTML + "<br/>" + myScene.txtStr;
+                                //subtitlesPannel.innerHTML = subtitlesPannel.innerHTML + "<br/>" + myScene.txtStr;
+                                if (typeof currentScene.sceneContent.storyTextLog === 'undefined'
+                                    || currentScene.sceneContent.storyTextLog === null) {
+                                    currentScene.sceneContent.storyTextLog = myScene.txtStr
+                                } else {
+                                    currentScene.sceneContent.storyTextLog += ("<br/>" + myScene.txtStr)
+                                }
+                                subtitlesPannel.innerHTML = currentScene.sceneContent.storyTextLog;
+                                //$("#subtitlesPannel").scroll();
+
                             }
                             child.anims.play(child.npcName + "_" + myScene.animKey, true);
                             switch (myScene.moveTo) {
@@ -479,15 +489,18 @@ App.prototype.start = function () {
                 currentScene.isActive = false;
             }
         } else {         //lets iterate over the array of scripted scenes:
+            //subtitlesPannel.innerHTML = "";
             subtitlesPannel.innerHTML = "";
             for (let r = 0; r < arrAllStories.length; r++) {
                 var myObj = arrAllStories[r];
-                testBoxDiv.innerHTML = "myObj.rmCoord: " + myObj.rmCoord.x + "/" +  myObj.rmCoord.y +
-                    " Player pX/pY: " + pX + "/" +  pY;
+                // testBoxDiv.innerHTML = "myObj.rmCoord: " + myObj.rmCoord.x + "/" +  myObj.rmCoord.y +
+                //     " Player pX/pY: " + pX + "/" +  pY;
                 // we get in only if this is the same room coordinates:
                 if ( (myObj.rmCoord.x === pX) && (myObj.rmCoord.y === pY) ) {
                     currentScene.isActive = true;
                     currentScene.sceneContent = arrAllStories[r];
+                    //currentScene.sceneContent.storyTextLog;
+                    subtitlesPannel.innerHTML = currentScene.sceneContent.storyTextLog;
                 }
             }
         }
@@ -510,6 +523,25 @@ App.prototype.start = function () {
       }
         // npc.setX( initXY.x );
     }
+
+    function playerHitNpc(npc, player) {
+        playerStepBack();
+        // var defaultKey = npc.npcDefaultKey;
+        // //child.anims.play('marchingDude', true);
+        // if (npc.moveVector === -1 && (npc.isActive) ) {
+        //     npc.anims.play(defaultKey, true);
+        //     npc.setVelocityX(0);
+        //     npc.moveVector = 1;
+        //     npc.x += 5;
+        // } else if (npc.moveVector === 1 && (npc.isActive)) {
+        //     npc.anims.play(defaultKey, true);
+        //     npc.setVelocityX(0);
+        //     npc.moveVector = -1;
+        //     npc.x -= 5;
+        // }
+        // npc.setX( initXY.x );
+    }
+
     function npcHitOtherNpc(npc) {
       // var initXY = npc.initCoord;
       // var npcX = npc.x;

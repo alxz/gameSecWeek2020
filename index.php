@@ -92,9 +92,9 @@
      <div id="phaserDiv" class="classPhaserDiv">
          <canvas></canvas>
          <div id="subtitles" class="subtitlesPanel">
-             <div> text 1 </div>
-             <div> text 2 </div>
-             <div> text 3 </div>
+             <div> ... </div>
+             <div> ... </div>
+             <div> ... </div>
          </div>
      </div>
        <br/><br/>
