@@ -165,6 +165,7 @@
           <button id="finSubmit" >Submit</button>
     </div>
 
+    <script src="./js/scenes.js" type="text/javascript"></script> <!-- Load phase file -->
     <script src="./js/miniMap.js" type="text/javascript"></script> <!-- Load phase file -->
     <script src="./js/game.js" type="text/javascript"></script> <!-- Load phase file -->
 
