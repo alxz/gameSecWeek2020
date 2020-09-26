@@ -485,7 +485,8 @@ App.prototype.start = function () {
             }  else {
                 // if all scene activities done we show questions:
                 doorkeys.children.iterate(child => {
-                    if ( child.roomCoord.x === currentScene.sceneContent.rmCoord.x && child.roomCoord.y === currentScene.sceneContent.rmCoord.y) {
+                    if ( child.roomCoord.x === currentScene.sceneContent.rmCoord.x
+                        && child.roomCoord.y === currentScene.sceneContent.rmCoord.y) {
                         if (currentScene.sceneContent.isQuestionVisible)  {
                             let qX = currentScene.sceneContent.questCoord.x + (child.roomCoord.x * cWidth);
                             let qY = currentScene.sceneContent.questCoord.y + (child.roomCoord.y * cHeight);
