@@ -173,11 +173,19 @@ table#tableMiniMap {
 	margin-right:auto;
 	min-width: 1024px;
 }
-.subtitlesPanel {
+.subtitlesPanelContainer {
 	background: #ffffff94;
-	max-height: 70px;
+	background-image: url("../png/messageBoard600x400.png");
+	background-repeat: no-repeat;
+	background-size: cover;
+	min-height: 80px;
+}
+.subtitlesPanel {
+	max-height: 80px;
 	overflow-y: auto;
 	text-align: left;
+	margin: 5px;
+	padding: 5px;
 }
 .classPhaserDiv {
 	float: left;

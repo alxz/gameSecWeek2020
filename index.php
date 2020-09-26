@@ -68,12 +68,13 @@
          &nbsp; * &nbsp;
        </td><td>
          IUN: &nbsp;
-         <input type="text" name="customIUN" onchange="updateCustomIUN(this.value)" value="" size="15">
+         <input type="text" name="customIUN" onchange="updateCustomIUN(this.value)" value="" size="14">
        </td><td style="width: 250px;">
          &nbsp; &nbsp;
          Timer: <span id="userTimer"></span> &nbsp;
-       </td><td id="testBox" style=" font-size: x-small; margin: 5px; padding: 5px;">
-             Test:
+       </td><td>
+              <label for="hideMapCheckBox">Hide Map</label>
+              <input type="checkbox" id="hideMapCheckBox" name="hideMapCheckBox" value="0" onchange="showMiniMap(this.value)">
         </td><td>
          <label for="silentCheckBox">Mute</label>
          <input type="checkbox" id="silentCheckBox" name="silentCheckBox" value="0" onchange="updateSilentCheckBox(this.value)">
@@ -91,10 +92,9 @@
    <div id="mainDiv" class="classmainDiv">
      <div id="phaserDiv" class="classPhaserDiv">
          <canvas></canvas>
+         <div class="subtitlesPanelContainer">
          <div id="subtitles" class="subtitlesPanel">
-             <div> ... </div>
-             <div> ... </div>
-             <div> ... </div>
+         </div>
          </div>
      </div>
        <br/><br/>

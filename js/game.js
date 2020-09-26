@@ -3,6 +3,7 @@ var App = function () {
 // by Alexey Zapromyotov (c) 2019-2020
 var customIUN="";
 var isSilent = false;
+var isMapHidden = false; // to show and hide miniMap
 var cWidth = 800; //canvas width
 var cHeight = 520; //canvas height
 App.prototype.start = function () {
@@ -57,9 +58,10 @@ App.prototype.start = function () {
     const submitAnswerButton = document.getElementById("submitAnswerButton");
     const submitMsgContainer = document.getElementById("submitMsg");
     const isSilentCheckBox = document.getElementById("silentCheckBox");
-    const testBox = document.getElementById("testBox");
+    const hideMapCheckBox = document.getElementById("hideMapCheckBox");
     const testBoxDiv = document.getElementById("testBoxDiv");
-    const subtitlesPannel = document.getElementById("subtitles");
+    const subtitlesPannel = document.getElementById("subtitles"); //// to show and hide miniMap
+
     var subtitles = [];
     var addSubtitles = function (newText) {
         let found = false;
@@ -327,7 +329,7 @@ App.prototype.start = function () {
         let thisY = player.y;
         let pX = Math.floor(thisX / cWidth);
         let pY = Math.floor(thisY / cHeight);
-        let noBreak = false;
+        //let isQuestionVisible = false;
         // currentScene = { isActive: false, sceneContent: null }; /// ======= <***> ========
         //if there is already an action running do not seek for another scene:
         if (currentScene.isActive)  {
@@ -365,7 +367,10 @@ App.prototype.start = function () {
                                 } else {
                                     currentScene.sceneContent.storyTextLog += ("<br/>" + myScene.txtStr)
                                 }
-                                subtitlesPannel.innerHTML = currentScene.sceneContent.storyTextLog;
+                                if (subtitlesPannel.innerHTML !==  currentScene.sceneContent.storyTextLog) {
+                                    subtitlesPannel.innerHTML = currentScene.sceneContent.storyTextLog;
+                                    subtitlesPannel.scrollTop = subtitlesPannel.scrollHeight;
+                                }
                                 //$("#subtitlesPannel").scroll();
 
                             }
@@ -474,16 +479,19 @@ App.prototype.start = function () {
                             //testBox.innerHTML = " S:" +curtScene;
                         }
                     })
+                if (curtScene === lastScene ) {
+                    currentScene.sceneContent.isQuestionVisible = true ;
+                }
             }  else {
                 // if all scene activities done we show questions:
                 doorkeys.children.iterate(child => {
                     if ( child.roomCoord.x === currentScene.sceneContent.rmCoord.x && child.roomCoord.y === currentScene.sceneContent.rmCoord.y) {
-                        //myX === pX && myY === pY
-                        // questCoord: {x: 400, y: 350 }
-                        // child.enableBody(true, child.initCoord.x, child.initCoord.y, true, true); //  + (myX * cWidth)
-                        let qX = currentScene.sceneContent.questCoord.x + (child.roomCoord.x * cWidth);
-                        let qY = currentScene.sceneContent.questCoord.y + (child.roomCoord.y * cHeight);
-                        child.enableBody(true, qX, qY, true, true);
+                        if (currentScene.sceneContent.isQuestionVisible)  {
+                            let qX = currentScene.sceneContent.questCoord.x + (child.roomCoord.x * cWidth);
+                            let qY = currentScene.sceneContent.questCoord.y + (child.roomCoord.y * cHeight);
+                            child.enableBody(true, qX, qY, true, true);
+                            currentScene.sceneContent.isQuestionVisible = false;
+                        }
                     }
                 });
                 currentScene.isActive = false;
@@ -500,7 +508,10 @@ App.prototype.start = function () {
                     currentScene.isActive = true;
                     currentScene.sceneContent = arrAllStories[r];
                     //currentScene.sceneContent.storyTextLog;
-                    subtitlesPannel.innerHTML = currentScene.sceneContent.storyTextLog;
+                    if (subtitlesPannel.innerHTML !==  currentScene.sceneContent.storyTextLog)
+                    {
+                        subtitlesPannel.innerHTML = currentScene.sceneContent.storyTextLog;
+                    }
                 }
             }
         }
@@ -637,6 +648,7 @@ App.prototype.start = function () {
         totalQestionsAsked++;
         var ifSuccessCallback = function () {
             //submitAnswerButton.style.display = 'none';
+            playerStepBack();
             playSound(soundOk);
             key.disableBody(true, true); // this is to remove the key(object) from the scene
 
@@ -690,6 +702,7 @@ App.prototype.start = function () {
             //submitAnswerButton.style.display = "";
         }
         showQuestion(key.question, ifSuccessCallback, ifCancelCallback);
+
     }
 
     function stopPlayer() {
@@ -918,7 +931,7 @@ App.prototype.start = function () {
                             myDude.initCoord = { x: coord.x, y: coord.y};
                             //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
                             myDude.anims.play('rotatingKey', true);
-                            myDude.disableBody(true, true); // do not remove the object, but hide it: (true,false)
+                            myDude.disableBody(false, true); // do not remove the object, but hide it: (true,false)
 
                             //console.log("question from key", myKey.question);
                             keyIndex++;
@@ -1668,16 +1681,33 @@ function updateCustomIUN(val) {
 
 function updateSilentCheckBox(val) {
   //silentCheckBox = val;
-  var element = document.getElementById("silentCheckBox");
+
+  let element = document.getElementById("silentCheckBox");
   if (element != null) {
-      //silentCheckBox = document.getElementById("silentCheckBox").value;
+
       if (element.checked) {
-        isSilent = true;
+        isMapHidden = true;
       } else {
-        isSilent = false;
+          isMapHidden = false;
       }
   }
   console.log('updateSilentCheckBox is updated! Now: ' + silentCheckBox);
+}
+
+function showMiniMap(val) {
+
+    var element = document.getElementById("hideMapCheckBox");
+    if (element != null) {
+        //silentCheckBox = document.getElementById("silentCheckBox").value;
+        if (element.checked) {
+            isSilent = true;
+            document.getElementById("mazeWDrsRmsMap").style.display = "none";
+        } else {
+            isSilent = false;
+            document.getElementById("mazeWDrsRmsMap").style.display = "block";
+        }
+    }
+    console.log('showMiniMap is updated! Now: ' + val);
 }
 
 function msieversion()
