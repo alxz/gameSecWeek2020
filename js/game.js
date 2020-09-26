@@ -157,6 +157,7 @@ App.prototype.start = function () {
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
         this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
         this.load.spritesheet('green-key-sprite', 'png/keyAnimation.png', { frameWidth: 40, frameHeight: 100 });
+        this.load.spritesheet('questionMark', 'png/questionMark.png', { frameWidth: 50, frameHeight: 50 });
         this.load.image('messageBoard', 'png/messageBoard600x400.png');
         this.load.spritesheet('cafeTableBrown', 'png/cafeteriaTablesSprite.png', {frameWidth: 80, frameHeight: 75});
 
@@ -168,6 +169,7 @@ App.prototype.start = function () {
         this.load.spritesheet('HSoloMan', 'png/HSoloMan1_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
         this.load.spritesheet('HSoloManTypingPhoto', 'png/HSoloMan_TypingPhonePhoto.png', {frameWidth: 50, frameHeight: 75});
         this.load.spritesheet('dude', 'png/docMUHC50x75L4U4D4R4.png', {frameWidth: 50, frameHeight: 75});
+        this.load.spritesheet('docWalk4w', 'png/doctorWalkFourWay.png', {frameWidth: 50, frameHeight: 75});
 
         this.load.spritesheet('compDesk4x4', 'png/compDesk4x4v3Lock.png', {frameWidth: 75, frameHeight: 75});
         //yellowDocOne.png
@@ -918,20 +920,20 @@ App.prototype.start = function () {
                         })
                         if (isUniqueCoord) { // we skip the room if there already one key placed before:
                             scene.anims.create({
-                                key: 'rotatingKey',
-                                frames: scene.anims.generateFrameNumbers('gold-key-sprite', {start: 0, end: 6}),
-                                frameRate: 10,
+                                key: 'questionMarkRotates',
+                                frames: scene.anims.generateFrameNumbers('questionMark', {start: 0, end: 7}),
+                                frameRate: 5,
                                 repeat: -1
                             });
 
-                            var myDude = doorkeys.create(coord.x, coord.y, 'docOther').setScale(1); //doors keys (dude)
+                            var myDude = doorkeys.create(coord.x, coord.y, 'questionMarkRotates').setScale(.8); //doors keys (dude)
                             myDude.question = megaMAP.questionList[keyIndex];
                             myDude.id = keyIndex;
                             myDude.moveVector = 1;
                             myDude.roomCoord = { x: x, y: y};
                             myDude.initCoord = { x: coord.x, y: coord.y};
                             //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
-                            myDude.anims.play('rotatingKey', true);
+                            myDude.anims.play('questionMarkRotates', true);
                             myDude.disableBody(false, true); // do not remove the object, but hide it: (true,false)
 
                             //console.log("question from key", myKey.question);

@@ -5,7 +5,7 @@ function getAllStories() {
             rmCoord: { x: 0, y: 1 }, //800:520
             nextScene: 0,
             lastScene: 8,
-            questCoord: {x: 600, y: 350 },
+            questCoord: {x: 550, y: 350 },
             sceneList: [
                 {
                     sceneId: 0,
@@ -169,7 +169,7 @@ function getAllStories() {
             rmCoord: { x: 1, y: 0 },
             nextScene: 0,
             lastScene: 4,
-            questCoord: {x: 580, y: 350 },
+            questCoord: {x: 550, y: 350 },
             sceneList: [
                 {
                     sceneId: 0,
@@ -257,66 +257,15 @@ function getAllStories() {
                     removeSprite: false,
                     lastAnimKey: 'stayRight'
                 }
-                // ,
-                // {
-                //     sceneId: 4,
-                //     spriteId: 2,
-                //     objType: 'NPC',
-                //     npcName: 'Joker',
-                //     animKey: 'walkDownHSolo',
-                //     moveTo: 'UP',
-                //     vectorXY: { x: 0, y: -1 },
-                //     startXY: { x: 320, y: 330 },
-                //     endXY: { x: 320, y: 200 },
-                //     timeFrame: 5,
-                //     txtLabel: 'Joker',
-                //     txtStr: ' Joker: Yes! \r\n   Get to go!!!',
-                //     initRead: false,
-                //     removeSprite: true,
-                //     lastAnimKey: 'HSoloStandUp'
-                // },
-                // {
-                //     sceneId: 5,
-                //     spriteId: 3,
-                //     objType: 'NPC',
-                //     npcName: 'JokerPhone',
-                //     animKey: 'typingLeftHSolo',
-                //     moveTo: 'NO',
-                //     vectorXY: { x: 0, y: 0 },
-                //     startXY: { x: 320, y: 200 },
-                //     endXY: { x: 320, y: 200 },
-                //     timeFrame: 5,
-                //     txtLabel: 'Joker',
-                //     txtStr: ' Joker: Welcome! \r\n   Lets see what is there!!!',
-                //     initRead: false,
-                //     removeSprite: false,
-                //     lastAnimKey: 'typingLeftHSolo'
-                // },
-                // {
-                //     sceneId: 7,
-                //     spriteId: 3,
-                //     objType: 'NPC',
-                //     npcName: 'JokerPhone',
-                //     animKey: 'HSoloPhotoLeft',
-                //     moveTo: 'NO',
-                //     vectorXY: { x: 0, y: 0 },
-                //     startXY: { x: 320, y: 200 },
-                //     endXY: { x: 320, y: 200 },
-                //     timeFrame: 5,
-                //     txtLabel: 'Joker',
-                //     txtStr: ' Joker: I wil take some photos... \r\n  Thats it, all done!',
-                //     initRead: false,
-                //     removeSprite: false,
-                //     lastAnimKey: 'HSoloStay'
-                // }
+
             ]
         },
         {
             storyId: 2,
             rmCoord: { x: 0, y: 2 },
             nextScene: 0,
-            lastScene: 4,
-            questCoord: {x: 580, y: 350 },
+            lastScene: 5,
+            questCoord: {x: 550, y: 350 },
             sceneList: [
                 {
                     sceneId: 0,
@@ -354,9 +303,9 @@ function getAllStories() {
                 },
                 {
                     sceneId: 1,
-                    spriteId: 1,
+                    spriteId: 6,
                     objType: 'NPC',
-                    npcName: 'YellowDoc',
+                    npcName: 'YellowDocTwo',
                     animKey: 'walkLeft',
                     moveTo: 'LEFT',
                     vectorXY: { x: -1, y: 0 },
@@ -375,6 +324,24 @@ function getAllStories() {
                     spriteId: 6,
                     objType: 'NPC',
                     npcName: 'YellowDocTwo',
+                    animKey: 'standFace',
+                    moveTo: 'NO',
+                    vectorXY: { x: -1, y: 0 },
+                    startXY: { x: 440, y: 250 }, //{ x: 650, y: 720 }
+                    endXY: { x: 440, y: 250 },
+                    timeFrame: 1,
+                    txtLabel: 'EmplSpeech',
+                    txtStr: '',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'standFace'
+
+                },
+                {
+                    sceneId: 3,
+                    spriteId: 7,
+                    objType: 'NPC',
+                    npcName: 'DocWalk4w',
                     animKey: 'walkRight',
                     moveTo: 'RIGHT',
                     vectorXY: { x: 1, y: 0 },
@@ -385,16 +352,16 @@ function getAllStories() {
                     txtStr: ' Employee: Hey dude! \r\n Wanna see something funny?!',
                     initRead: false,
                     removeSprite: true,
-                    lastAnimKey: 'standFace'
+                    lastAnimKey: 'faceUp'
                 },
                 {
-                    sceneId: 3,
-                    spriteId: 6,
+                    sceneId: 4,
+                    spriteId: 7,
                     objType: 'NPC',
-                    npcName: 'YellowDocTwo',
+                    npcName: 'DocWalk4w',
                     animKey: 'stayRight',
                     moveTo: 'NO',
-                    vectorXY: { x: 1, y: 0 },
+                    vectorXY: { x: 0, y: 0 },
                     startXY: { x: 370, y: 250 },
                     endXY: { x: 370, y: 250 },
                     timeFrame: 5,
@@ -677,6 +644,65 @@ function getSceneSprites(coordX, coordY) {
                         {
                             key: 'walkRight',
                             frames: { spriteName: 'docOther', start: 12, end: 15 },
+                            frameRate: 5,
+                            repeat: -1
+                        }
+                    ]
+                },
+                {
+                    id: 7,
+                    isActive: true,
+                    objType: 'NPC',
+                    npcName: 'DocWalk4w',
+                    defaultKey: 'faceUp',
+                    npcCoordX : (650),
+                    npcCoordY : (320),
+                    animList: [
+                        {
+                            key: 'faceUp',
+                            frames: { spriteName: 'docWalk4w', start: 4, end: 4 },
+                            frameRate: 1,
+                            repeat: 1
+                        },
+                        {
+                            key: 'faceBack',
+                            frames: { spriteName: 'docWalk4w', start: 8, end: 8 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'stayLeft',
+                            frames: { spriteName: 'docWalk4w', start: 2, end: 2 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'stayRight',
+                            frames: { spriteName: 'docWalk4w', start: 13, end: 13 },
+                            frameRate: 5,
+                            repeat: 0
+                        },
+                        {
+                            key: 'walkUp',
+                            frames: { spriteName: 'docWalk4w', start: 8, end: 11 },
+                            frameRate: 5,
+                            repeat: -1
+                        },
+                        {
+                            key: 'walkDown',
+                            frames: { spriteName: 'docWalk4w', start: 4, end: 7 },
+                            frameRate: 5,
+                            repeat: -1
+                        },
+                        {
+                            key: 'walkLeft',
+                            frames: { spriteName: 'docWalk4w', start: 0, end: 3 },
+                            frameRate: 5,
+                            repeat: -1
+                        },
+                        {
+                            key: 'walkRight',
+                            frames: { spriteName: 'docWalk4w', start: 12, end: 15 },
                             frameRate: 5,
                             repeat: -1
                         }
