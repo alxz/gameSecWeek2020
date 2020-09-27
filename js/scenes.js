@@ -302,7 +302,7 @@ function getAllStories() {
                     lastAnimKey: 'cafeTableBrownWithChairFood'
                 },
                 {
-                    sceneId: 1,
+                    sceneId: 2,
                     spriteId: 6,
                     objType: 'NPC',
                     npcName: 'YellowDocTwo',
@@ -320,7 +320,7 @@ function getAllStories() {
 
                 },
                 {
-                    sceneId: 2,
+                    sceneId: 3,
                     spriteId: 6,
                     objType: 'NPC',
                     npcName: 'YellowDocTwo',
@@ -338,7 +338,7 @@ function getAllStories() {
 
                 },
                 {
-                    sceneId: 3,
+                    sceneId: 4,
                     spriteId: 7,
                     objType: 'NPC',
                     npcName: 'DocWalk4w',
@@ -355,7 +355,137 @@ function getAllStories() {
                     lastAnimKey: 'faceUp'
                 },
                 {
+                    sceneId: 5,
+                    spriteId: 7,
+                    objType: 'NPC',
+                    npcName: 'DocWalk4w',
+                    animKey: 'stayRight',
+                    moveTo: 'NO',
+                    vectorXY: { x: 0, y: 0 },
+                    startXY: { x: 370, y: 250 },
+                    endXY: { x: 370, y: 250 },
+                    timeFrame: 5,
+                    txtLabel: 'EmplSpeech',
+                    txtStr: ' Employee: Look at this pictures! \r\n Just made them this morning!',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'stayRight'
+                }
+            ]
+        },
+        {
+            storyId: 3,
+            rmCoord: { x: 2, y: 0 },
+            nextScene: 0,
+            lastScene: 6,
+            questCoord: {x: 500, y: 350 },
+            sceneList: [
+                {
+                    sceneId: 0,
+                    spriteId: 0,
+                    objType: 'DECORATION',
+                    npcName: 'compDesk1',
+                    animKey: 'compDeskLock',
+                    moveTo: 'NO',
+                    vectorXY: { x: 0, y: 0 },
+                    startXY: { x: 280, y: 200 },
+                    endXY: { x: 280, y: 200 },
+                    timeFrame: 1,
+                    txtLabel: 'Computer',
+                    txtStr: ' Computer: z-z-z...',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'compDeskLock'
+                },
+                {
+                    sceneId: 1,
+                    spriteId: 8,
+                    objType: 'DECORATION',
+                    npcName: 'compDesk1',
+                    animKey: 'compDeskLock',
+                    moveTo: 'NO',
+                    vectorXY: { x: 0, y: 0 },
+                    startXY: { x: 520, y: 200 },
+                    endXY: { x: 520, y: 200 },
+                    timeFrame: 1,
+                    txtLabel: 'Computer',
+                    txtStr: '',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'compDeskLock'
+                },
+                {
+                    sceneId: 2,
+                    spriteId: 4,
+                    objType: 'DECORATION',
+                    npcName: 'cafeTableFood',
+                    animKey: 'cafeTableBrownWithChairFood',
+                    moveTo: 'NO',
+                    vectorXY: { x: 0, y: 0 },
+                    startXY: { x: 400, y: 250 },
+                    endXY: { x: 400, y: 250 },
+                    timeFrame: 1,
+                    txtLabel: 'cafeTable',
+                    txtStr: ' Somewhere in cafeteria...',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'cafeTableBrownWithChairFood'
+                },
+                {
+                    sceneId: 3,
+                    spriteId: 6,
+                    objType: 'NPC',
+                    npcName: 'YellowDocTwo',
+                    animKey: 'walkLeft',
+                    moveTo: 'LEFT',
+                    vectorXY: { x: -1, y: 0 },
+                    startXY: { x: 650, y: 250 }, //{ x: 650, y: 720 }
+                    endXY: { x: 440, y: 250 },
+                    timeFrame: 5,
+                    txtLabel: 'EmplSpeech',
+                    txtStr: ' Employee: Drink some coffee  \r\n eat some snacks',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'standFace'
+
+                },
+                {
                     sceneId: 4,
+                    spriteId: 6,
+                    objType: 'NPC',
+                    npcName: 'YellowDocTwo',
+                    animKey: 'standFace',
+                    moveTo: 'NO',
+                    vectorXY: { x: -1, y: 0 },
+                    startXY: { x: 440, y: 250 }, //{ x: 650, y: 720 }
+                    endXY: { x: 440, y: 250 },
+                    timeFrame: 1,
+                    txtLabel: 'EmplSpeech',
+                    txtStr: '',
+                    initRead: false,
+                    removeSprite: false,
+                    lastAnimKey: 'standFace'
+
+                },
+                {
+                    sceneId: 5,
+                    spriteId: 7,
+                    objType: 'NPC',
+                    npcName: 'DocWalk4w',
+                    animKey: 'walkRight',
+                    moveTo: 'RIGHT',
+                    vectorXY: { x: 1, y: 0 },
+                    startXY: { x: 320, y: 250 },
+                    endXY: { x: 370, y: 250 },
+                    timeFrame: 5,
+                    txtLabel: 'EmplSpeech',
+                    txtStr: ' Employee: Hey dude! \r\n Wanna see something funny?!',
+                    initRead: false,
+                    removeSprite: true,
+                    lastAnimKey: 'faceUp'
+                },
+                {
+                    sceneId: 6,
                     spriteId: 7,
                     objType: 'NPC',
                     npcName: 'DocWalk4w',
@@ -705,6 +835,29 @@ function getSceneSprites(coordX, coordY) {
                             frames: { spriteName: 'docWalk4w', start: 12, end: 15 },
                             frameRate: 5,
                             repeat: -1
+                        }
+                    ]
+                },
+                {
+                    id: 8,
+                    isActive: false,
+                    objType: 'DECORATION',
+                    npcName: 'compDesk2',
+                    defaultKey: 'compDeskLock',
+                    npcCoordX : (480),
+                    npcCoordY : (720),
+                    animList: [
+                        {
+                            key: 'compDeskOpen',
+                            frames: { spriteName: 'compDesk4x4', start: 0, end: 3 },
+                            frameRate: 5,
+                            repeat: 10
+                        },
+                        {
+                            key: 'compDeskLock',
+                            frames: { spriteName: 'compDesk4x4', start: 4, end: 7 },
+                            frameRate: 5,
+                            repeat: 10
                         }
                     ]
                 }
