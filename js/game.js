@@ -6,6 +6,8 @@ var isSilent = false;
 var isMapHidden = false; // to show and hide miniMap
 var cWidth = 800; //canvas width
 var cHeight = 520; //canvas height
+$("#closeMiniMap").unbind("click");
+$("#closeMiniMap").bind("click", closeMiniMap);
 App.prototype.start = function () {
     var config = {
         type: Phaser.CANVAS,
@@ -44,7 +46,7 @@ App.prototype.start = function () {
     var position = {x: 0, y: 0};
     var initMapPos = {initX: 0, initY: 0};
     var maxRoomCountX;    var maxRoomCountY;
-    var hospitalBed;
+    var hospitalBed; var officeCompDesk;
     var totalQestionsAnswered = 0;    var totalQestionsAsked = 0;    var listofquestions = "";
     var currentScene = { isActive: false, sceneContent: null }; // current Scene storage
     var music;    var doorOpen;    var soundStep;    var pickupKey;    var soundOk;
@@ -159,7 +161,9 @@ App.prototype.start = function () {
         this.load.spritesheet('green-key-sprite', 'png/keyAnimation.png', { frameWidth: 40, frameHeight: 100 });
         this.load.spritesheet('questionMark', 'png/questionMark.png', { frameWidth: 50, frameHeight: 50 });
         this.load.image('messageBoard', 'png/messageBoard600x400.png');
+        this.load.image('computerSetOff', 'png/ComputerSetOff.png'); //officeCompDesk
         this.load.spritesheet('cafeTableBrown', 'png/cafeteriaTablesSprite.png', {frameWidth: 80, frameHeight: 75});
+        this.load.spritesheet('ComputerScreenSet6', 'png/ComputerScreenSet6x750x85.png', {frameWidth: 125, frameHeight: 85});
 
         this.load.image('star', 'assets/star.png');
         //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
@@ -266,6 +270,343 @@ App.prototype.start = function () {
         soundFinal = this.sound.add('soundFinal');
     }
 
+    function buildWorld(scene) {
+        //We get our source from the following rest:
+        // megaMAP = game.cache.json.get('megaMAP');
+        // roomsMAP = game.cache.json.get('doorsMAP');
+        doors = scene.physics.add.group({
+            immovable: true
+        });
+        walls = scene.physics.add.staticGroup();
+        doorkeys = scene.physics.add.group();
+
+        officeCompDesk = scene.physics.add.group({
+            immovable: true
+        }); //this.load.image('computerSetOff', 'png/ComputerSetOff.png')
+        officeCompDesk.setDepth(0);
+        hospitalBed = scene.physics.add.group({
+            immovable: true
+        });
+        npcGroup = scene.physics.add.group();
+        npcGroup.setDepth(10);
+
+        for (var y = 0; y < megaMAP.doorsMAP.length; y++) {
+            //megaMAP.doorsMAP[y]
+            var mapDoors = megaMAP.doorsMAP[y];
+            var mapDoor=[];
+            for (var x = 0; x < mapDoors.length; x++) {
+                //mapDoors[x]
+                mapDoor = mapDoors[x];
+                // TODO:
+                var indX = 800 * x;
+                var indY = 520 * y;
+                //console.log('generateArrayMap mapDoor: ', mapDoor);
+                //var roomName = JSON.stringify(mapDoor);
+                var roomName = 'u' + mapDoor.U + 'd' + mapDoor.D + 'l' + mapDoor.L + 'r' + mapDoor.R;
+                // scene.add.image(400 +indX, 270 + indY, roomName).setScale(0.8);
+
+                if (x == maxRoomCountX - 1 && y == maxRoomCountY - 1) {
+                    //finalRoom
+                    scene.add.image(400 + indX, 270 + indY, 'finalRoom').setScale(0.8);
+                } else {
+                    var randomRoom = (Math.round(Math.random() * 4))+1; //RoomBG_0
+                    scene.add.image(400 + indX, 270 + indY, 'RoomBG_0' + randomRoom).setScale(0.8);
+                    //scene.add.image(400 + indX, 270 + indY, 'baseRoomBack').setScale(0.8);
+                }
+                // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
+                for (var i = 0; i < 9; i++) {
+                    // Upper right bar
+                    walls.create(indX + 500 + (i * 30), indY + 90 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                    // lower left bar
+                    walls.create(indX + 110 + (i * 20), indY + 360 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                    // upper left bar
+                    walls.create(indX + 310 - (i * 30), indY + 90 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                    // lower right bar
+                    walls.create(indX + 480 + (i * 28), indY + 500 - ((i * 0.70) * 28), 'blockRed').setScale(0.8).refreshBody();
+                }
+                for (var i = 0; i < 6; i++) {
+                    walls.create(indX + 220 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                    // lower right bar
+                    walls.create(indX + 480 + (i * 20), indY + 450 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
+                }
+
+            }
+        }
+
+        function randomPlsOrMin(min, max) {
+            return random(min, max) * (Math.random() < 0.5 ? -1 : 1);
+        }
+
+        function random(min, max) {
+            return Math.floor(Math.random() * max) + min;
+        }
+
+        var doorsIndex = 0;
+        roomsMAP = megaMAP.doorsMAP;
+
+        //megaMAP.doorsMAP
+        for (var y = 0; y < megaMAP.doorsMAP.length; y++) {
+            //megaMAP.doorsMAP[y]
+            var mapDoors = megaMAP.doorsMAP[y];
+            var mapDoor=[];
+            for (var x = 0; x < mapDoors.length; x++) {
+                mapDoor = mapDoors[x];
+                //===================================================================
+                var indX = 800 * (x);
+                var indY = 520 * (y);
+                var keysCount = -1;
+
+                if (mapDoor.U === 1) {
+                    keysCount++;
+                    doorsArray[doorsIndex] = doors.create(indX + 400, indY + 80, 'doorU').setScale(.8);
+                    doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'U'};
+                    roomsMAP[x][y].upperDoor = doorsArray[doorsIndex];
+                    doorsIndex++;
+                    for (var i = 0; i < 3; i++) {
+                        //vertical bars for upper and lower doors:
+                        walls.create((indX + 320), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create((indX + 480), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
+                    }
+                } else if (mapDoor.U === 0) {
+                    roomsMAP[x][y].upperDoor = doors.create(-100, -100, 'star');
+                    roomsMAP[x][y].upperDoor.visible = false; // not really a door, just replacement
+                    for (var i = 0; i < 9; i++) {
+                        walls.create(indX + 320 + (i * 20), indY + 100, 'blockRed').setScale(0.8).refreshBody();
+                    }
+                }
+                if (mapDoor.D === 1) {
+                    keysCount++;
+                    doorsArray[doorsIndex] = doors.create(indX + 400, indY + 500, 'doorD').setScale(0.8);
+                    doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'D'};
+                    roomsMAP[x][y].downDoor = doorsArray[doorsIndex];
+                    doorsIndex++;
+                    for (var i = 0; i < 2; i++) {
+                        //vertical bars for upper and lower doors:
+                        walls.create((indX + 320), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create((indX + 480), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                    }
+                } else if (mapDoor.D === 0) {
+                    roomsMAP[x][y].downDoor = doors.create(-100, -100, 'star');
+                    roomsMAP[x][y].downDoor.visible = false; // not really a door, just replacement
+                    for (var i = 0; i < 9; i++) {
+                        walls.create(indX + 320 + (i * 20), indY + 500, 'blockRed').setScale(0.8).refreshBody();
+                    }
+                }
+                if (mapDoor.L === 1) {
+                    keysCount++;
+                    doorsArray[doorsIndex] = doors.create(indX + 80, indY + 260, 'doorL').setScale(0.8);
+                    doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'L'};
+                    roomsMAP[x][y].leftDoor = doorsArray[doorsIndex];
+                    doorsIndex++;
+                    for (var i = 0; i < 4; i++) {
+                        //diaganal bars for left door
+                        walls.create(indX - 20 + (i * 40), indY + (200 ), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX - 20 + (i * 25), indY + (340 ), 'blockRed').setScale(0.8).refreshBody();
+                    }
+
+                } else if (mapDoor.L === 0) {
+                    roomsMAP[x][y].leftDoor = doors.create(-100, -100, 'star');
+                    roomsMAP[x][y].leftDoor.visible = false; // not really a door, just replacement
+                    for (var i = 0; i < 3; i++) {
+                        walls.create(indX + 40, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 20 + (i * 40), indY + 240, 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 20 + (i * 40), indY + 380, 'blockRed').setScale(0.8).refreshBody();
+                    }
+                }
+                if (mapDoor.R === 1) {
+                    keysCount++;
+                    doorsArray[doorsIndex] = doors.create(indX + 720, indY + 260, 'doorR').setScale(0.8);
+                    doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'R'};
+                    roomsMAP[x][y].rightDoor = doorsArray[doorsIndex];
+                    doorsIndex++;
+                    for (var i = 0; i < 3; i++) {
+                        walls.create(indX - 20 - (i * 40), indY + (200 ), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 700 + (i * 40), indY + (160 + i * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 700 + (i * 40), indY + (380 - i * 20), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX - 20 - (i * 25), indY + (340 ), 'blockRed').setScale(0.8).refreshBody();
+                    }
+
+                } else if (mapDoor.R === 0) {
+                    roomsMAP[x][y].rightDoor = doors.create(-100, -100, 'star');
+                    roomsMAP[x][y].rightDoor.visible = false; // not really a door, just replacement
+                    for (var i = 0; i < 3; i++) {
+                        walls.create(indX + 740, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 700 + (i * 40), indY + 240, 'blockRed').setScale(0.8).refreshBody();
+                        walls.create(indX + 700 + (i * 40), indY + 380, 'blockRed').setScale(0.8).refreshBody();
+                    }
+                }
+                //doorkeys
+                var arrKeys = [];
+                var getKeyCordinateWithProximity = function (keys, minProximity) {
+                    //To generate a random keys location:
+                    /* -- We disable start room keys now (no need for this type of the game):
+                    // var c1 = {x: 400 + indX + randomPlsOrMin(50, 80), y: 260 + indY + randomPlsOrMin(50, 30)};
+                    var c1 = {x: 400 + indX + randomPlsOrMin(20, 60), y: 260 + indY + randomPlsOrMin(20, 50)};
+                    var check = 0;
+                    for (var i = 0; i < keys.length; i++) {
+                        var c0 = keys[i];
+                        var isProximityXGood = Math.abs(c0.x - c1.x) > minProximity;
+                        var isProximityYGood = Math.abs(c0.y - c1.y) > minProximity;
+
+                        if (!isProximityXGood && !isProximityYGood) {
+                            return getKeyCordinateWithProximity(keys, minProximity);
+                        }
+                    }
+                    */
+                    var c1 = {x: 400 + indX , y: 260+ indY }; // JUST SET TO CENTER!
+                    return c1;
+                }
+                // We disable start room keys now (no need for this type of the game):
+                // if (x == 0 && y == 0) {
+                //     keysCount = keysCount + 1;
+                // }
+                for (var i = 0; i < keysCount; i++) {
+                    if (x == maxRoomCountX - 1 && y == maxRoomCountY - 1) {
+                        //this is our final room - no keys required...
+                        //TODO: place a final room sprite here!!!
+                        //draw the patient: hospitalBed
+                        hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'patientEmptyPlaceHolder').setScale(1.2);
+
+                    } else {
+                        var coord = getKeyCordinateWithProximity(arrKeys, 100);
+                        var isUniqueCoord = true;
+                        doorkeys.children.iterate(child => {
+                            if ( child.roomCoord.x === x && child.roomCoord.y === y) {
+                                isUniqueCoord = false;
+                                coord.x +=20;
+                                coord.y +=20;
+                            }
+                        })
+                        if (isUniqueCoord) { // we skip the room if there already one key placed before:
+                            scene.anims.create({
+                                key: 'questionMarkRotates',
+                                frames: scene.anims.generateFrameNumbers('questionMark', {start: 0, end: 11}),
+                                frameRate: 5,
+                                repeat: -1
+                            });
+
+                            var myDude = doorkeys.create(coord.x, coord.y, 'questionMarkRotates').setScale(.8); //doors keys (dude)
+                            myDude.question = megaMAP.questionList[keyIndex];
+                            myDude.id = keyIndex;
+                            myDude.moveVector = 1;
+                            myDude.roomCoord = { x: x, y: y};
+                            myDude.initCoord = { x: coord.x, y: coord.y};
+                            //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
+                            myDude.anims.play('questionMarkRotates', true);
+                            myDude.disableBody(false, true); // do not remove the object, but hide it: (true,false)
+
+                            //console.log("question from key", myKey.question);
+                            keyIndex++;
+                            arrKeys[arrKeys.length] = coord;
+                        }
+                    }
+                }
+                //=================================================================
+            }
+        }
+        buildStory(0, 1, scene);
+        initPlayer(scene);
+
+    }
+    function buildStory(coordX, coordY,scene) {
+        //a function to build a room animation logic
+        //    cWidth = 800; //canvas width
+        //    cHeight = 520; //canvas height
+        var cW = Math.round(cWidth /2);
+        var cH = Math.round(cHeight /2);
+        // passed parameters: coordX, coordY - these are for a room center coordinates
+        npcGroup = scene.physics.add.group({
+            immovable: true
+        });
+        arrAllStories = getAllStories(); //console.log("==> arrAllStories:  ", arrAllStories);
+        arrScenes = getSceneSprites(coordX,coordY) ;
+        //==================== /==================== /====================
+        //==================== /==================== /====================
+        for (let k=0; k< arrScenes.length; k++) {
+            // going over an array: arrScenes
+            var sceneAnimGrp = arrScenes[k].animNPCGroup;
+            // console.log("===> arrScenes Objects[",k,"]",arrScenes[k]);
+            // ************ ========== animNPCGroup start: ============ ************
+            for (let i=0; i < sceneAnimGrp.length; i++) {
+                //animNPCGroup - we loop over the group of sprites:
+                var myObj = sceneAnimGrp[i];
+                var npcId = myObj.id;
+                var objActive = myObj.isActive;
+                var objType = myObj.objType;
+                var npcName = myObj.npcName;
+                var npcDefaultKey = myObj.npcName + "_" + myObj.defaultKey;
+                var sceneCoordX = myObj.npcCoordX;
+                var sceneCoordY = myObj.npcCoordY;
+
+                // console.log("===> npcName (sceneAnimGrp[",i,"])",npcName);
+                // console.log("===> npcId (sceneAnimGrp[",i,"])",npcId);
+
+                for (let m=0; m < myObj.animList.length; m++ ) {
+                    //reading animation parameters:
+                    var animKey = npcName + "_" + myObj.animList[m].key;
+                    var animSprite = myObj.animList[m].frames.spriteName;
+                    var animStart = myObj.animList[m].frames.start;
+                    var animEnd = myObj.animList[m].frames.end;
+                    var animFrameRate = myObj.animList[m].frameRate;
+                    var animRepeat = myObj.animList[m].repeat;
+                    //building animation resources:
+                    scene.anims.create({
+                        key: animKey,
+                        frames: scene.anims.generateFrameNumbers(animSprite, {start: animStart, end: animEnd}),
+                        frameRate: animFrameRate,
+                        repeat: animRepeat
+                    });
+                    console.log("===> sceneAnimGrp[", i," ]  => animKey (myObj.animList[",m,"])",animKey);
+
+                }
+            }
+            // ************ ========== : animNPCGroup End ============ ************
+        }
+
+        for (let j=0; j < arrAllStories.length; j++) {  // **** reading a list of stories and adding npcGroup.children
+            var aStory = arrAllStories[j].sceneList;
+            for (let m=0; m < aStory.length; m++) {
+                var isUniqueSpriteId = true;
+                var aSt = aStory[m];
+                npcGroup.children.iterate(child => {
+                    if (child.npcId === aSt.spriteId + "_" + arrAllStories[j].storyId) {
+                        isUniqueSpriteId = false;
+                    }
+                });
+                if (isUniqueSpriteId) {
+                    var objSprite = npcGroup.create(aSt.startXY.x + (arrAllStories[j].rmCoord.x * cWidth) , aSt.startXY.y
+                        + (arrAllStories[j].rmCoord.y * cHeight) , aSt.animKey + "_" + arrAllStories[j].storyId + "_" + aSt.sceneId).setScale(1);
+                    objSprite.npcDefaultKey = aSt.npcName + "_" + aSt.animKey;
+                    objSprite.spriteId = aSt.spriteId;
+                    objSprite.npcName = aSt.npcName;
+                    objSprite.npcId = aSt.spriteId + "_" + arrAllStories[j].storyId;
+                    // objSprite.moveVector = aSt.vectorXY;
+                    objSprite.objType = aSt.objType;
+                    if (aSt.zIndex != undefined) objSprite.setDepth(aSt.zIndex); // set the display depth - z-index
+
+                    if (objSprite.objType === 'DECORATION') {
+                        objSprite.anims.play(objSprite.npcDefaultKey , false);
+                    } else {
+                        objSprite.anims.play(objSprite.npcDefaultKey , true);
+                        objSprite.disableBody(false, true);
+                    }
+                    //console.log("------->>> objSprite: ", (aSt.startXY.x + (arrAllStories[j].rmCoord.x * cWidth)) , (aSt.startXY.y  + (arrAllStories[j].rmCoord.y * cHeight)) , aSt.animKey);
+                    console.log("-->>> objSpriteProps: ", objSprite.npcId, " / " , objSprite.npcName, " / ", objSprite.npcDefaultKey, " animKey: ",aSt.animKey, " XY: ", aSt.startXY);
+
+                }
+            }
+        }  // **** Done reading a list of stories and adding npcGroup.children ****
+
+        var jsonAnim = scene.anims.toJSON(); //Export animation to JSON
+        console.log("***===>  Game jsonAnim: ", jsonAnim );
+        let k=0;
+        npcGroup.children.iterate(child => {
+            console.log("*** ===>  npcGroup.child[" + k + "]: ", child.npcName, " npcId: ", child.npcId, " npcDefaultKey:", child.npcDefaultKey );
+            k++;
+        });
+        console.log("}}}} Scene per Room Array arrAllStories: ",arrAllStories );
+    }
+
     function breakingBad() {
         isPause = true;
         stopPlayer();
@@ -344,12 +685,21 @@ App.prototype.start = function () {
                     var myScene = currentScene.sceneContent.sceneList[i];
                     npcGroup.children.iterate(child => {
                         if ( child.npcId === (myScene.spriteId + "_" + currentScene.sceneContent.storyId) ) {
-                            testBoxDiv.innerHTML = "child.npcId:" + child.npcId + " / "
-                                + (myScene.spriteId + "_" + currentScene.sceneContent.storyId)
-                                + "; Coord: myX: " + myX + " myY: " + myY;
+
+                            if ( i == 0 && currentScene.sceneContent.decorXY != undefined) {
+                                let decX = currentScene.sceneContent.decorXY.x;
+                                let decY = currentScene.sceneContent.decorXY.y;
+                                officeCompDesk.create(decX + (myX * cWidth), decY + (myY * cHeight), 'computerSetOff').setScale(1);
+                                //child.setDepth(10);
+                                officeCompDesk.setDepth(0);
+                            }
+                            //child.setDepth(1);
+                            // testBoxDiv.innerHTML = "child.npcId:" + child.npcId + " / "
+                            //     + (myScene.spriteId + "_" + currentScene.sceneContent.storyId)
+                            //     + "; Coord: myX: " + myX + " myY: " + myY;
                             //console.log("==> child obj: ", child);
                             // testBox.innerHTML = "npcId:" + child.npcId + "<br/>"
-                            //     + "myScene:" + myScene.spriteId + "<br/>"
+                            //     + "myScene:" + m riteId + "<br/>"
                             //     + "myScene+:" + (myScene.spriteId + "_" + currentScene.sceneContent.storyId) ;
                             //testBox.innerHTML = " x:" + Math.round(child.x) + "<br/>y: " + Math.round(child.y);
                             sceneText.setText(myScene.txtStr);
@@ -562,19 +912,6 @@ App.prototype.start = function () {
       // var npcY  = npc.y;
       //var defaultKey = npc.npcDefaultKey;
       //child.anims.play('marchingDude', true);
-      /*
-      if (npc.moveVector === -1 && (npc.isActive)) {
-        npc.anims.play(defaultKey, true);
-        npc.setVelocityX(0);
-        npc.moveVector = 1;
-        npc.x += 15;
-      } else if (npc.moveVector === 1 && (npc.isActive)) {
-        npc.anims.play(defaultKey, true);
-        npc.setVelocityX(0);
-        npc.moveVector = -1;
-        npc.x -= 15;
-      }
-      */
     }
 
     function hitTheDoor(player, door) {
@@ -717,238 +1054,6 @@ App.prototype.start = function () {
        //}
     }
 
-    function buildWorld(scene) {
-        //We get our source from the following rest:
-        // megaMAP = game.cache.json.get('megaMAP');
-        // roomsMAP = game.cache.json.get('doorsMAP');
-        doors = scene.physics.add.group({
-            immovable: true
-        });
-        walls = scene.physics.add.staticGroup();
-        doorkeys = scene.physics.add.group();
-        npcGroup = scene.physics.add.group();
-        hospitalBed = scene.physics.add.group({
-            immovable: true
-        });
-
-        for (var y = 0; y < megaMAP.doorsMAP.length; y++) {
-          //megaMAP.doorsMAP[y]
-          var mapDoors = megaMAP.doorsMAP[y];
-          var mapDoor=[];
-          for (var x = 0; x < mapDoors.length; x++) {
-            //mapDoors[x]
-            mapDoor = mapDoors[x];
-            // TODO:
-            var indX = 800 * x;
-            var indY = 520 * y;
-            //console.log('generateArrayMap mapDoor: ', mapDoor);
-            //var roomName = JSON.stringify(mapDoor);
-            var roomName = 'u' + mapDoor.U + 'd' + mapDoor.D + 'l' + mapDoor.L + 'r' + mapDoor.R;
-            // scene.add.image(400 +indX, 270 + indY, roomName).setScale(0.8);
-
-            if (x == maxRoomCountX - 1 && y == maxRoomCountY - 1) {
-              //finalRoom
-              scene.add.image(400 + indX, 270 + indY, 'finalRoom').setScale(0.8);
-            } else {
-              var randomRoom = (Math.round(Math.random() * 4))+1; //RoomBG_0
-              scene.add.image(400 + indX, 270 + indY, 'RoomBG_0' + randomRoom).setScale(0.8);
-              //scene.add.image(400 + indX, 270 + indY, 'baseRoomBack').setScale(0.8);
-            }
-            // Since I'm using only one backgroun now: baseRoomBack = RoomBG_red.png
-            for (var i = 0; i < 9; i++) {
-                // Upper right bar
-                walls.create(indX + 500 + (i * 30), indY + 90 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                // lower left bar
-                walls.create(indX + 110 + (i * 20), indY + 360 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                // upper left bar
-                walls.create(indX + 310 - (i * 30), indY + 90 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-                // lower right bar
-                walls.create(indX + 480 + (i * 28), indY + 500 - ((i * 0.70) * 28), 'blockRed').setScale(0.8).refreshBody();
-            }
-            for (var i = 0; i < 6; i++) {
-              walls.create(indX + 220 + (i * 20), indY + 370 + ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-              // lower right bar
-              walls.create(indX + 480 + (i * 20), indY + 450 - ((i * 0.70) * 20), 'blockRed').setScale(0.8).refreshBody();
-            }
-
-          }
-        }
-
-        function randomPlsOrMin(min, max) {
-            return random(min, max) * (Math.random() < 0.5 ? -1 : 1);
-        }
-
-        function random(min, max) {
-            return Math.floor(Math.random() * max) + min;
-        }
-
-        var doorsIndex = 0;
-        roomsMAP = megaMAP.doorsMAP;
-
-        //megaMAP.doorsMAP
-        for (var y = 0; y < megaMAP.doorsMAP.length; y++) {
-          //megaMAP.doorsMAP[y]
-          var mapDoors = megaMAP.doorsMAP[y];
-          var mapDoor=[];
-          for (var x = 0; x < mapDoors.length; x++) {
-            mapDoor = mapDoors[x];
-            //===================================================================
-                var indX = 800 * (x);
-                var indY = 520 * (y);
-                var keysCount = -1;
-
-                if (mapDoor.U === 1) {
-                    keysCount++;
-                    doorsArray[doorsIndex] = doors.create(indX + 400, indY + 80, 'doorU').setScale(.8);
-                    doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'U'};
-                    roomsMAP[x][y].upperDoor = doorsArray[doorsIndex];
-                    doorsIndex++;
-                    for (var i = 0; i < 3; i++) {
-                      //vertical bars for upper and lower doors:
-                        walls.create((indX + 320), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
-                        walls.create((indX + 480), indY + (20 + i * 40), 'blockRed').setScale(0.8).refreshBody();
-                    }
-                } else if (mapDoor.U === 0) {
-                    roomsMAP[x][y].upperDoor = doors.create(-100, -100, 'star');
-                    roomsMAP[x][y].upperDoor.visible = false; // not really a door, just replacement
-                    for (var i = 0; i < 9; i++) {
-                        walls.create(indX + 320 + (i * 20), indY + 100, 'blockRed').setScale(0.8).refreshBody();
-                    }
-                }
-                if (mapDoor.D === 1) {
-                    keysCount++;
-                    doorsArray[doorsIndex] = doors.create(indX + 400, indY + 500, 'doorD').setScale(0.8);
-                    doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'D'};
-                    roomsMAP[x][y].downDoor = doorsArray[doorsIndex];
-                    doorsIndex++;
-                    for (var i = 0; i < 2; i++) {
-                      //vertical bars for upper and lower doors:
-                        walls.create((indX + 320), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
-                        walls.create((indX + 480), indY + (500 + i * 20), 'blockRed').setScale(0.8).refreshBody();
-                    }
-                } else if (mapDoor.D === 0) {
-                    roomsMAP[x][y].downDoor = doors.create(-100, -100, 'star');
-                    roomsMAP[x][y].downDoor.visible = false; // not really a door, just replacement
-                    for (var i = 0; i < 9; i++) {
-                        walls.create(indX + 320 + (i * 20), indY + 500, 'blockRed').setScale(0.8).refreshBody();
-                    }
-                }
-                if (mapDoor.L === 1) {
-                    keysCount++;
-                    doorsArray[doorsIndex] = doors.create(indX + 80, indY + 260, 'doorL').setScale(0.8);
-                    doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'L'};
-                    roomsMAP[x][y].leftDoor = doorsArray[doorsIndex];
-                    doorsIndex++;
-                    for (var i = 0; i < 4; i++) {
-                      //diaganal bars for left door
-                        walls.create(indX - 20 + (i * 40), indY + (200 ), 'blockRed').setScale(0.8).refreshBody();
-                        walls.create(indX - 20 + (i * 25), indY + (340 ), 'blockRed').setScale(0.8).refreshBody();
-                    }
-
-                } else if (mapDoor.L === 0) {
-                    roomsMAP[x][y].leftDoor = doors.create(-100, -100, 'star');
-                    roomsMAP[x][y].leftDoor.visible = false; // not really a door, just replacement
-                    for (var i = 0; i < 3; i++) {
-                        walls.create(indX + 40, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
-                        walls.create(indX + 20 + (i * 40), indY + 240, 'blockRed').setScale(0.8).refreshBody();
-                        walls.create(indX + 20 + (i * 40), indY + 380, 'blockRed').setScale(0.8).refreshBody();
-                    }
-                }
-                if (mapDoor.R === 1) {
-                    keysCount++;
-                    doorsArray[doorsIndex] = doors.create(indX + 720, indY + 260, 'doorR').setScale(0.8);
-                    doorsArray[doorsIndex].roomCoord = {roomX: x, roomY: y, doorType: 'R'};
-                    roomsMAP[x][y].rightDoor = doorsArray[doorsIndex];
-                    doorsIndex++;
-                    for (var i = 0; i < 3; i++) {
-                        walls.create(indX - 20 - (i * 40), indY + (200 ), 'blockRed').setScale(0.8).refreshBody();
-                        walls.create(indX + 700 + (i * 40), indY + (160 + i * 20), 'blockRed').setScale(0.8).refreshBody();
-                        walls.create(indX + 700 + (i * 40), indY + (380 - i * 20), 'blockRed').setScale(0.8).refreshBody();
-                        walls.create(indX - 20 - (i * 25), indY + (340 ), 'blockRed').setScale(0.8).refreshBody();
-                    }
-
-                } else if (mapDoor.R === 0) {
-                    roomsMAP[x][y].rightDoor = doors.create(-100, -100, 'star');
-                    roomsMAP[x][y].rightDoor.visible = false; // not really a door, just replacement
-                    for (var i = 0; i < 3; i++) {
-                        walls.create(indX + 740, indY + 270 + (i * 40), 'blockRed').setScale(0.8).refreshBody();
-                        walls.create(indX + 700 + (i * 40), indY + 240, 'blockRed').setScale(0.8).refreshBody();
-                        walls.create(indX + 700 + (i * 40), indY + 380, 'blockRed').setScale(0.8).refreshBody();
-                    }
-                }
-                //doorkeys
-                var arrKeys = [];
-                var getKeyCordinateWithProximity = function (keys, minProximity) {
-                    //To generate a random keys location:
-                    /* -- We disable start room keys now (no need for this type of the game):
-                    // var c1 = {x: 400 + indX + randomPlsOrMin(50, 80), y: 260 + indY + randomPlsOrMin(50, 30)};
-                    var c1 = {x: 400 + indX + randomPlsOrMin(20, 60), y: 260 + indY + randomPlsOrMin(20, 50)};
-                    var check = 0;
-                    for (var i = 0; i < keys.length; i++) {
-                        var c0 = keys[i];
-                        var isProximityXGood = Math.abs(c0.x - c1.x) > minProximity;
-                        var isProximityYGood = Math.abs(c0.y - c1.y) > minProximity;
-
-                        if (!isProximityXGood && !isProximityYGood) {
-                            return getKeyCordinateWithProximity(keys, minProximity);
-                        }
-                    }
-                    */
-                    var c1 = {x: 400 + indX , y: 260+ indY }; // JUST SET TO CENTER!
-                    return c1;
-                }
-                // We disable start room keys now (no need for this type of the game):
-                // if (x == 0 && y == 0) {
-                //     keysCount = keysCount + 1;
-                // }
-                for (var i = 0; i < keysCount; i++) {
-                    if (x == maxRoomCountX - 1 && y == maxRoomCountY - 1) {
-                        //this is our final room - no keys required...
-                        //TODO: place a final room sprite here!!!
-                        //draw the patient: hospitalBed
-                        hospitalBed.create(400 + 800 * (x), 270 + 520 * (y), 'patientEmptyPlaceHolder').setScale(1.2);
-
-                    } else {
-                        var coord = getKeyCordinateWithProximity(arrKeys, 100);
-                        var isUniqueCoord = true;
-                        doorkeys.children.iterate(child => {
-                            if ( child.roomCoord.x === x && child.roomCoord.y === y) {
-                                isUniqueCoord = false;
-                                coord.x +=20;
-                                coord.y +=20;
-                            }
-                        })
-                        if (isUniqueCoord) { // we skip the room if there already one key placed before:
-                            scene.anims.create({
-                                key: 'questionMarkRotates',
-                                frames: scene.anims.generateFrameNumbers('questionMark', {start: 0, end: 7}),
-                                frameRate: 5,
-                                repeat: -1
-                            });
-
-                            var myDude = doorkeys.create(coord.x, coord.y, 'questionMarkRotates').setScale(.8); //doors keys (dude)
-                            myDude.question = megaMAP.questionList[keyIndex];
-                            myDude.id = keyIndex;
-                            myDude.moveVector = 1;
-                            myDude.roomCoord = { x: x, y: y};
-                            myDude.initCoord = { x: coord.x, y: coord.y};
-                            //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
-                            myDude.anims.play('questionMarkRotates', true);
-                            myDude.disableBody(false, true); // do not remove the object, but hide it: (true,false)
-
-                            //console.log("question from key", myKey.question);
-                            keyIndex++;
-                            arrKeys[arrKeys.length] = coord;
-                        }
-                    }
-                }
-            //=================================================================
-          }
-        }
-        initPlayer(scene);
-        buildStory(0, 1, scene);
-    }
-
     function playSound(sound) {
       //sounds: //SOUND MUSIC STOPED To Debug IE11 issues
       // if ( !isBrowserIE ) { if (!sound.isPlaying) { sound.play();} }
@@ -1058,132 +1163,6 @@ App.prototype.start = function () {
         newMapLocation.innerHTML = '<div class="divMinMapTD"> ' +
                                 '<img class="imgMapDude" src="./png/docOne.png" alt="}{" height="22" width="20">' +
                                 '</div>';
-    }
-
-    function buildStory(coordX, coordY,scene) {
-      //a function to build a room animation logic
-              //    cWidth = 800; //canvas width
-              //    cHeight = 520; //canvas height
-        var cW = Math.round(cWidth /2);
-        var cH = Math.round(cHeight /2);
-        // passed parameters: coordX, coordY - these are for a room center coordinates
-        npcGroup = scene.physics.add.group({
-            immovable: true
-        });
-      arrAllStories = getAllStories();
-
-     console.log("==> arrAllStories:  ", arrAllStories);
-
-      arrScenes = getSceneSprites(coordX,coordY) ;
-      //==================== /==================== /====================
-      // let deltaX = Math.floor(coordX * 400);  // let deltaY = Math.floor(coordY * 260);
-      //==================== /==================== /====================
-
-      for (let k=0; k< arrScenes.length; k++) {
-        // going over an array: arrScenes
-        var sceneAnimGrp = arrScenes[k].animNPCGroup;
-        console.log("===> arrScenes Objects[",k,"]",arrScenes[k]);
-
-        // ************ ========== animNPCGroup start: ============ ************
-        for (let i=0; i < sceneAnimGrp.length; i++) {
-          //animNPCGroup - we loop over the group of sprites:
-            var myObj = sceneAnimGrp[i];
-
-            var npcId = myObj.id;
-            var objActive = myObj.isActive;
-            var objType = myObj.objType;
-            var npcName = myObj.npcName;
-            var npcDefaultKey = myObj.npcName + "_" + myObj.defaultKey;
-            var sceneCoordX = myObj.npcCoordX;
-            var sceneCoordY = myObj.npcCoordY;
-
-            // console.log("===> npcName (sceneAnimGrp[",i,"])",npcName);
-            // console.log("===> npcId (sceneAnimGrp[",i,"])",npcId);
-
-          for (let m=0; m < myObj.animList.length; m++ ) {
-            //reading animation parameters:
-              var animKey = npcName + "_" + myObj.animList[m].key;
-              var animSprite = myObj.animList[m].frames.spriteName;
-              var animStart = myObj.animList[m].frames.start;
-              var animEnd = myObj.animList[m].frames.end;
-              var animFrameRate = myObj.animList[m].frameRate;
-              var animRepeat = myObj.animList[m].repeat;
-              //building animation resources:
-              scene.anims.create({
-                  key: animKey,
-                  frames: scene.anims.generateFrameNumbers(animSprite, {start: animStart, end: animEnd}),
-                  frameRate: animFrameRate,
-                  repeat: animRepeat
-              });
-              console.log("===> sceneAnimGrp[", i," ]  => animKey (myObj.animList[",m,"])",animKey);
-
-          }
-            // create an object and place it to the group:
-            // use myObj.standFace to set standing posture:
-            // var myDude = npcGroup.create(sceneCoordX , sceneCoordY, npcDefaultKey).setScale(1);
-            // myDude.npcDefaultKey = npcDefaultKey;
-            // console.log("myDude.npcDefaultKey: ", myDude.npcDefaultKey );
-            // //activate default animation:
-            //
-            // myDude.npcName = npcName;
-            // myDude.npcId = npcId;
-            // myDude.moveVector = 0;
-            // myDude.isActive = objActive;
-            // myDude.objType = objType;
-            // myDude.npcDefaultKey = npcDefaultKey;
-            // myDude.animList = myObj.animList;
-            // if (myDude.objType === 'DECORATION') {
-            //     myDude.anims.play(npcDefaultKey, false);
-            // } else {
-            //     myDude.anims.play(npcDefaultKey, true);
-            //     myDude.disableBody(false, true);
-            // }
-        }
-          // ************ ========== : animNPCGroup End ============ ************
-      }
-
-        for (let j=0; j < arrAllStories.length; j++) {  // **** reading a list of stories and adding npcGroup.children
-            //let arrX = arrAllStories[j].rmCoord.x; let arrY = arrAllStories[j].rmCoord.y;
-            var aStory = arrAllStories[j].sceneList;
-            for (let m=0; m < aStory.length; m++) {
-                var isUniqueSpriteId = true;
-                var aSt = aStory[m];
-
-                npcGroup.children.iterate(child => {
-                    if (child.npcId === aSt.spriteId + "_" + arrAllStories[j].storyId) {
-                        isUniqueSpriteId = false;
-                    }
-                });
-                if (isUniqueSpriteId) {
-                    var objSprite = npcGroup.create(aSt.startXY.x + (arrAllStories[j].rmCoord.x * cWidth) , aSt.startXY.y
-                                    + (arrAllStories[j].rmCoord.y * cHeight) , aSt.animKey + "_" + arrAllStories[j].storyId + "_" + aSt.sceneId).setScale(1);
-                    objSprite.npcDefaultKey = aSt.npcName + "_" + aSt.animKey;
-                    objSprite.spriteId = aSt.spriteId;
-                    objSprite.npcName = aSt.npcName;
-                    objSprite.npcId = aSt.spriteId + "_" + arrAllStories[j].storyId;
-                    // objSprite.moveVector = aSt.vectorXY;
-                    objSprite.objType = aSt.objType;
-                    if (objSprite.objType === 'DECORATION') {
-                        objSprite.anims.play(objSprite.npcDefaultKey , false);
-                    } else {
-                        objSprite.anims.play(objSprite.npcDefaultKey , true);
-                        objSprite.disableBody(false, true);
-                    }
-                    //console.log("------->>> objSprite: ", (aSt.startXY.x + (arrAllStories[j].rmCoord.x * cWidth)) , (aSt.startXY.y  + (arrAllStories[j].rmCoord.y * cHeight)) , aSt.animKey);
-                    console.log("-->>> objSpriteProps: ", objSprite.npcId, " / " , objSprite.npcName, " / ", objSprite.npcDefaultKey, " animKey: ",aSt.animKey, " XY: ", aSt.startXY);
-
-                }
-            }
-        }  // **** Done reading a list of stories and adding npcGroup.children ****
-
-        var jsonAnim = scene.anims.toJSON(); //Export animation to JSON
-        console.log("***===>  Game jsonAnim: ", jsonAnim );
-        let k=0;
-        npcGroup.children.iterate(child => {
-            console.log("*** ===>  npcGroup.child[" + k + "]: ", child.npcName, " npcId: ", child.npcId, " npcDefaultKey:", child.npcDefaultKey );
-            k++;
-        });
-        console.log("}}}} Scene per Room Array arrAllStories: ",arrAllStories );
     }
 
 /////////questions functionality
@@ -1710,7 +1689,10 @@ function showMiniMap(val) {
             document.getElementById("mazeWDrsRmsMap").style.display = "block";
         }
     }
-    console.log('showMiniMap is updated! Now: ' + val);
+    //console.log('showMiniMap is updated! Now: ' + val);
+}
+function closeMiniMap() {
+    document.getElementById("mazeWDrsRmsMap").style.display = "none";
 }
 
 function msieversion()

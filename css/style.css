@@ -290,6 +290,17 @@ tr,td {
 	height: 30px;
 	/* background-color: lightgray; */
 }
+.map-close {
+	cursor: pointer;
+	/*position: absolute;*/
+	/*top: 100px;*/
+	/*right: 20%;*/
+	color: white;
+	font-size: 20px;
+	width: 30px;
+	height: 30px;
+	float: right;
+}
 .finScr-container {
 	position: absolute;
 	left: 0px;

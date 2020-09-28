@@ -99,6 +99,7 @@
      </div>
        <br/><br/>
      <div id="mazeWDrsRmsMap" class="scoreAndMiniMap-container">
+         <span class="map-close" id="closeMiniMap" onclick="closeMiniMap()"> [X] </span>
        <div id="divScoreText" class="scoreText-container"></div>
        <div id="divMiniMapText" class="scoreText-container"></div>
        <div id="divMiniMap" class="miniMap-container"></div>
