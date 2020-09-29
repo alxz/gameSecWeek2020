@@ -33,7 +33,7 @@ App.prototype.start = function () {
     var userIUN;
     var player;    var npcGroup; var arrScenes =[]; var arrAllStories=[];
     var theGameIsStarted = false;
-    var cursors;
+    var cursors; var wasd; //both are to capture key pressed
     var score ;
     var gameOver = false;
     var scoreText;    var scoreTextShade;    var scoreTextShade0;  var playPosText;
@@ -163,7 +163,7 @@ App.prototype.start = function () {
         this.load.image('computerSetOff', 'png/ComputerSetOff.png'); //officeCompDesk
         this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
         this.load.spritesheet('green-key-sprite', 'png/keyAnimation.png', { frameWidth: 40, frameHeight: 100 });
-        this.load.spritesheet('questionMark', 'png/questionMark.png', { frameWidth: 50, frameHeight: 50 });
+        this.load.spritesheet('questionMark', 'png/questionMarkV4.png', { frameWidth: 50, frameHeight: 50 });
         this.load.spritesheet('compDeskScrBlank', 'png/ComputerSetOffV2.png', {frameWidth: 125, frameHeight: 125}); //officeCompDesk
         this.load.spritesheet('ComputerScreenSet6', 'png/ComputerScreenSet6x750x85.png', {frameWidth: 125, frameHeight: 85});
         this.load.spritesheet('cafeTableBrown', 'png/cafeteriaTablesSprite.png', {frameWidth: 80, frameHeight: 75});
@@ -216,6 +216,12 @@ App.prototype.start = function () {
         showMazeGfx(megaMAP.doorsMAP, "divMiniMap",language);
         mapLocContent = document.getElementById("y0x0").innerHTML;
         cursors = this.input.keyboard.createCursorKeys();
+        wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        });
         // walls = this.physics.add.staticGroup();
         // walls.create(160, 450, 'wall400x230').setScale(0.8).refreshBody();
 
@@ -246,7 +252,7 @@ App.prototype.start = function () {
               backgroundColor: '#241D4A',
               shadow: "offsetX = 15, offsetY = 15, fill= true"
             });
-        //sceneText.setDepth = 100;
+        sceneText.setDepth(10);
 
           divScoreText.style = "scoreText-container";
           divScoreText.innerHTML = "You have keys: <br><hr/><br>";
@@ -479,7 +485,13 @@ App.prototype.start = function () {
                         if (isUniqueCoord) { // we skip the room if there already one key placed before:
                             scene.anims.create({
                                 key: 'questionMarkRotates',
-                                frames: scene.anims.generateFrameNumbers('questionMark', {start: 0, end: 11}),
+                                frames: scene.anims.generateFrameNumbers('questionMark', {start: 0, end: 9}),
+                                frameRate: 5,
+                                repeat: -1
+                            });
+                            scene.anims.create({
+                                key: 'questionMarkStarRotates',
+                                frames: scene.anims.generateFrameNumbers('questionMark', {start: 10, end: 19}),
                                 frameRate: 5,
                                 repeat: -1
                             });
@@ -493,6 +505,7 @@ App.prototype.start = function () {
                             //console.log('NPC [',myDude.id, ']', ' x=', myDude.initCoord .x, 'y=', myDude.initCoord.y);
                             myDude.anims.play('questionMarkRotates', true);
                             myDude.disableBody(false, true); // do not remove the object, but hide it: (true,false)
+
 
                             //console.log("question from key", myKey.question);
                             keyIndex++;
@@ -637,6 +650,7 @@ App.prototype.start = function () {
             return;
         }
         drawScores(_this);
+        player.prePrevPos = player.prevPos;
         player.prevPos = {x: player.x, y: player.y};
         playerNavigationHandler();
         // dudeUpdate(player);
@@ -742,7 +756,7 @@ App.prototype.start = function () {
                                         sceneText.setText("");
                                         sceneText.x = thisX - 380;
                                         sceneText.y = thisY + 200;
-                                        sceneText.setDepth = 100;
+                                        // sceneText.setDepth(10);
 
                                         if (myScene.removeSprite) {
                                             child.disableBody(true, true); // this is to remove the key(object) from the scene
@@ -844,6 +858,24 @@ App.prototype.start = function () {
                             let qY = currentScene.sceneContent.questCoord.y + (child.roomCoord.y * cHeight);
                             child.enableBody(true, qX, qY, true, true);
                             currentScene.sceneContent.isQuestionVisible = false;
+                            child.setInteractive();
+                            child.on('pointerdown', function (pointer) {
+                                child.anims.play('questionMarkStarRotates', true);
+                                setTimeout(myFunction => {
+                                    child.anims.play('questionMarkRotates', true);
+                                    collectKey(player, child);
+                                }, 2000);
+
+
+                                //myDude.setTint(0xff0000);
+                                //console.log('pointer down pressed!');
+                            });
+                            child.on('pointerup', function () {
+                                //myDude.clearTint();
+                            });
+                            child.on('pointerout', function () {
+                                //myDude.clearTint();
+                            });
                         }
                     }
                 });
@@ -889,7 +921,8 @@ App.prototype.start = function () {
     }
 
     function playerHitNpc(npc, player) {
-        playerStepBack();
+        //playerStepBack();
+        playerTwoStepBack();
         // var defaultKey = npc.npcDefaultKey;
         // //child.anims.play('marchingDude', true);
         // if (npc.moveVector === -1 && (npc.isActive) ) {
@@ -974,6 +1007,11 @@ App.prototype.start = function () {
         player.y = player.prevPos.y;
     }
 
+    function playerTwoStepBack() {
+        player.x = player.prePrevPos.x;
+        player.y = player.prePrevPos.y;
+    }
+
     function collectKey(player, key) {
 
         try {
@@ -1014,11 +1052,13 @@ App.prototype.start = function () {
         var onVideoCloseCallback = function () {
             hideVideo();
             isPause = false;
-            playerStepBack();
+            playerTwoStepBack();
+            //playerStepBack();
         }
 
         var ifCancelCallback = function (question) {
             //submitAnswerButton.style.display = 'none';
+            //playerTwoStepBack();
             var videoLangURL ="";
             playSound(soundFail);
             gameState.customIUN = customIUN;
@@ -1079,23 +1119,23 @@ App.prototype.start = function () {
     }
 
     function playerNavigationHandler() {
-
-        if (cursors.left.isDown) {
+        //capturing keys pressed to change the direction of the player movement:
+        if (cursors.left.isDown || wasd.left.isDown) {
            calcCoordOnMapPos(player.x,player.y);
             player.setVelocityX(-260);
             player.anims.play('left', true);
             playSound(soundStep);
-        } else if (cursors.up.isDown) {
+        } else if (cursors.up.isDown || wasd.up.isDown) {
            calcCoordOnMapPos(player.x,player.y);
             player.setVelocityY(-200);
             player.anims.play('up', true);
             playSound(soundStep);
-        } else if (cursors.down.isDown) {
+        } else if (cursors.down.isDown || wasd.down.isDown) {
            calcCoordOnMapPos(player.x,player.y);
             player.setVelocityY(200);
             player.anims.play('down', true);
             playSound(soundStep);
-        } else if (cursors.right.isDown) {
+        } else if (cursors.right.isDown || wasd.right.isDown) {
             calcCoordOnMapPos(player.x,player.y);
             player.setVelocityX(260);
             player.anims.play('right', true);
