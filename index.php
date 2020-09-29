@@ -73,10 +73,10 @@
          &nbsp; &nbsp;
          Timer: <span id="userTimer"></span> &nbsp;
        </td>
-<!--          <td>-->
-<!--              <label for="hideMapCheckBox">Hide Map</label>-->
-<!--              <input type="checkbox" id="hideMapCheckBox" name="hideMapCheckBox" value="0" onchange="showMiniMap(this.value)">-->
-<!--        </td>-->
+          <td>
+              <label for="hideMapCheckBox">Hide Map</label>
+              <input type="checkbox" id="hideMapCheckBox" name="hideMapCheckBox" value="0" onchange="showMiniMap(this.value)">
+        </td>
         <td>
          <label for="silentCheckBox">Mute</label>
          <input type="checkbox" id="silentCheckBox" name="silentCheckBox" value="0" onchange="updateSilentCheckBox(this.value)">

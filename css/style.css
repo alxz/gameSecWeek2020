@@ -100,16 +100,16 @@ button:hover{
   margin-top: 40px;
 	margin-left: auto;
 	margin-right: auto;
-	padding-left: auto;
-	padding-right: auto;
+	/*padding-left: auto;*/
+	/*padding-right: auto;*/
 }
 .mapsCont{
   /* position:relative;
   height: 350px; */
 	margin-left: auto;
 	margin-right: auto;
-	padding-left: auto;
-	padding-right: auto;
+	/*padding-left: auto;*/
+	/*padding-right: auto;*/
 }
 .mazeContainer {
 	width:98%;
@@ -179,18 +179,17 @@ table#tableMiniMap {
 	/*background-repeat: no-repeat;*/
 	/*background-size: cover;*/
 	min-height: 80px;
-	margin-right: ;: 10px;
+	margin-right: 1px;
+	margin-left: 10px;
 	padding: 10px;
 	color: white;
 }
 .subtitlesParentPanelContainer {
-	background: #ffffff94;
-	background-image: url("../png/subTitleBack.png");
-	background-repeat: no-repeat;
+	background: #ffffff94 url("../png/subTitleBack.png") no-repeat;
 	background-size: cover;
 	min-height: 85px;
-	margin: 5px;
-	padding: 5px;
+	margin: 5 px;
+	padding: 5 px;
 }
 .subtitlesPanel {
 	max-height: 80px;
@@ -243,16 +242,16 @@ tr,td {
 	text-align:left;
 }
 
-#divRoom {
-	background-image: url(./jpg/u0d0l0r0.jpg);
-    width: 480px;
-    height: 350px;
-		margin-left: auto;
-		margin-right: auto;
-		padding-left: auto;
-		padding-right: auto;
-    background-size: cover;
-}
+/*#divRoom {*/
+/*	background-image: url(./jpg/u0d0l0r0.jpg);*/
+/*    width: 480px;*/
+/*    height: 350px;*/
+/*		margin-left: auto;*/
+/*		margin-right: auto;*/
+/*		padding-left: auto;*/
+/*		padding-right: auto;*/
+/*    background-size: cover;*/
+/*}*/
 
 .question-container {
 	background-color: rgba(35, 37, 36, 0.68);

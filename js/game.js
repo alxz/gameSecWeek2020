@@ -158,7 +158,7 @@ App.prototype.start = function () {
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
-        this.load.image('messageBoard', 'png/subTitleBack.png');
+        this.load.image('messageBoard', 'png/subTitleBackBrownStiches.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('computerSetOff', 'png/ComputerSetOff.png'); //officeCompDesk
         this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
@@ -1675,22 +1675,22 @@ function updateSilentCheckBox(val) {
 }
 
 function showMiniMap(val) {
-
+    // function to show/hide miniMap - checkbox is on the top-bar
     var element = document.getElementById("hideMapCheckBox");
     if (element != null) {
-        //silentCheckBox = document.getElementById("silentCheckBox").value;
         if (element.checked) {
-            // isSilent = true;
             document.getElementById("mazeWDrsRmsMap").style.display = "none";
         } else {
-            // isSilent = false;
             document.getElementById("mazeWDrsRmsMap").style.display = "block";
         }
     }
-    //console.log('showMiniMap is updated! Now: ' + val);
+    //console.log('showMiniMap is updated! Now: ' + element.checked);
 }
+
 function closeMiniMap() {
+    // function to Hide only the mini-Map, used by [x] in the window
     document.getElementById("mazeWDrsRmsMap").style.display = "none";
+    document.getElementById("hideMapCheckBox").checked = true;
 }
 
 function msieversion()
