@@ -2,7 +2,7 @@ var App = function () {
 };
 // by Alexey Zapromyotov (c) 2019-2020
 var customIUN="";
-var isSilent = false;
+var isSilent = true; //No music no sounds!
 var isMapHidden = false; // to show and hide miniMap
 var cWidth = 800; //canvas width
 var cHeight = 520; //canvas height
@@ -60,6 +60,7 @@ App.prototype.start = function () {
     const submitAnswerButton = document.getElementById("submitAnswerButton");
     const submitMsgContainer = document.getElementById("submitMsg");
     const isSilentCheckBox = document.getElementById("silentCheckBox");
+                document.getElementById("silentCheckBox").checked = true;
     const hideMapCheckBox = document.getElementById("hideMapCheckBox");
     const testBoxDiv = document.getElementById("testBoxDiv");
     const subtitlesPannel = document.getElementById("subtitles"); //// to show and hide miniMap
@@ -157,18 +158,15 @@ App.prototype.start = function () {
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
+        this.load.image('messageBoard', 'png/messageBoard600x400.png');
+        this.load.image('star', 'assets/star.png');
+        this.load.image('computerSetOff', 'png/ComputerSetOff.png'); //officeCompDesk
         this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });
         this.load.spritesheet('green-key-sprite', 'png/keyAnimation.png', { frameWidth: 40, frameHeight: 100 });
         this.load.spritesheet('questionMark', 'png/questionMark.png', { frameWidth: 50, frameHeight: 50 });
-        this.load.image('messageBoard', 'png/messageBoard600x400.png');
-        this.load.image('computerSetOff', 'png/ComputerSetOff.png'); //officeCompDesk
-        this.load.spritesheet('cafeTableBrown', 'png/cafeteriaTablesSprite.png', {frameWidth: 80, frameHeight: 75});
+        this.load.spritesheet('compDeskScrBlank', 'png/ComputerSetOffV2.png', {frameWidth: 125, frameHeight: 125}); //officeCompDesk
         this.load.spritesheet('ComputerScreenSet6', 'png/ComputerScreenSet6x750x85.png', {frameWidth: 125, frameHeight: 85});
-
-        this.load.image('star', 'assets/star.png');
-        //this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-        //this.load.spritesheet('dude', 'png/docMUHCR4U1L4.png', {frameWidth: 50, frameHeight: 75});
-        //docMUHC50x75L4U4D4R4
+        this.load.spritesheet('cafeTableBrown', 'png/cafeteriaTablesSprite.png', {frameWidth: 80, frameHeight: 75});
         this.load.spritesheet('docOther', 'png/docOther.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
         this.load.spritesheet('HSoloMan', 'png/HSoloMan1_Sprite.png', {frameWidth: 50, frameHeight: 75}); //docOther.png
         this.load.spritesheet('HSoloManTypingPhoto', 'png/HSoloMan_TypingPhonePhoto.png', {frameWidth: 50, frameHeight: 75});
@@ -240,14 +238,15 @@ App.prototype.start = function () {
             /* backgroundColor: '#479B85',*/
             shadow: "offsetX = 5, offsetY = 5, fill= true"
           });
-          //sceneText
-          sceneText = this.add.text(10, 450, 'Text:',
+          //sceneText - we can see the dialogs next to the personor NPCs:
+         sceneText = this.add.text(10, 450, 'Text:',
             {
               fontSize: '20px',
               fill: '#DEF9FA',
               backgroundColor: '#241D4A',
               shadow: "offsetX = 15, offsetY = 15, fill= true"
             });
+        //sceneText.setDepth = 100;
 
           divScoreText.style = "scoreText-container";
           divScoreText.innerHTML = "You have keys: <br><hr/><br>";
@@ -280,10 +279,10 @@ App.prototype.start = function () {
         walls = scene.physics.add.staticGroup();
         doorkeys = scene.physics.add.group();
 
-        officeCompDesk = scene.physics.add.group({
-            immovable: true
-        }); //this.load.image('computerSetOff', 'png/ComputerSetOff.png')
-        officeCompDesk.setDepth(0);
+        // officeCompDesk = scene.physics.add.group({
+        //     immovable: true
+        // }); //this.load.image('computerSetOff', 'png/ComputerSetOff.png')
+        // officeCompDesk.setDepth(0);
         hospitalBed = scene.physics.add.group({
             immovable: true
         });
@@ -586,6 +585,7 @@ App.prototype.start = function () {
 
                     if (objSprite.objType === 'DECORATION') {
                         objSprite.anims.play(objSprite.npcDefaultKey , false);
+                        objSprite.disableBody(false, true);
                     } else {
                         objSprite.anims.play(objSprite.npcDefaultKey , true);
                         objSprite.disableBody(false, true);
@@ -689,9 +689,9 @@ App.prototype.start = function () {
                             if ( i == 0 && currentScene.sceneContent.decorXY != undefined) {
                                 let decX = currentScene.sceneContent.decorXY.x;
                                 let decY = currentScene.sceneContent.decorXY.y;
-                                officeCompDesk.create(decX + (myX * cWidth), decY + (myY * cHeight), 'computerSetOff').setScale(1);
-                                //child.setDepth(10);
-                                officeCompDesk.setDepth(0);
+                                // officeCompDesk.create(decX + (myX * cWidth), decY + (myY * cHeight), 'computerSetOff').setScale(1);
+                                // //child.setDepth(10);
+                                // officeCompDesk.setDepth(0);
                             }
                             //child.setDepth(1);
                             // testBoxDiv.innerHTML = "child.npcId:" + child.npcId + " / "
@@ -723,8 +723,6 @@ App.prototype.start = function () {
                                     subtitlesPannel.innerHTML = currentScene.sceneContent.storyTextLog;
                                     subtitlesPannel.scrollTop = subtitlesPannel.scrollHeight;
                                 }
-                                //$("#subtitlesPannel").scroll();
-
                             }
                             child.anims.play(child.npcName + "_" + myScene.animKey, true);
                             switch (myScene.moveTo) {
@@ -744,7 +742,7 @@ App.prototype.start = function () {
                                         sceneText.setText("");
                                         sceneText.x = thisX - 380;
                                         sceneText.y = thisY + 200;
-                                        //console.log("==> curtScene NO direction: " , curtScene, " lastScene: ", lastScene);
+                                        sceneText.setDepth = 100;
 
                                         if (myScene.removeSprite) {
                                             child.disableBody(true, true); // this is to remove the key(object) from the scene
@@ -765,7 +763,7 @@ App.prototype.start = function () {
                                         sceneText.setText("");
                                         sceneText.x = thisX - 380;
                                         sceneText.y = thisY + 200;
-
+                                        sceneText.setDepth = 100;
                                         if (myScene.removeSprite) {
                                             child.disableBody(true, true); // this is to remove the key(object) from the scene
                                         } else {
@@ -784,6 +782,7 @@ App.prototype.start = function () {
                                         sceneText.setText("");
                                         sceneText.x = thisX - 380;
                                         sceneText.y = thisY + 200;
+                                        sceneText.setDepth = 100;
                                         if (myScene.removeSprite) {
                                             child.disableBody(true, true); // this is to remove the key(object) from the scene
                                         } else {
@@ -801,6 +800,7 @@ App.prototype.start = function () {
                                         sceneText.setText("");
                                         sceneText.x = thisX - 380;
                                         sceneText.y = thisY + 200;
+                                        sceneText.setDepth = 100;
                                         if (myScene.removeSprite) {
                                             child.disableBody(true, true); // this is to remove the key(object) from the scene
                                         } else {
@@ -1662,18 +1662,16 @@ function updateCustomIUN(val) {
 }
 
 function updateSilentCheckBox(val) {
-  //silentCheckBox = val;
-
+  let silentCheckBox = val;
   let element = document.getElementById("silentCheckBox");
   if (element != null) {
-
       if (element.checked) {
-        isMapHidden = true;
+        isSilent = true;
       } else {
-          isMapHidden = false;
+          isSilent = false;
       }
   }
-  console.log('updateSilentCheckBox is updated! Now: ' + silentCheckBox);
+  console.log('isSilent is updated! Now: ', isSilent, " silentCheckBox: ", silentCheckBox);
 }
 
 function showMiniMap(val) {
@@ -1682,10 +1680,10 @@ function showMiniMap(val) {
     if (element != null) {
         //silentCheckBox = document.getElementById("silentCheckBox").value;
         if (element.checked) {
-            isSilent = true;
+            // isSilent = true;
             document.getElementById("mazeWDrsRmsMap").style.display = "none";
         } else {
-            isSilent = false;
+            // isSilent = false;
             document.getElementById("mazeWDrsRmsMap").style.display = "block";
         }
     }

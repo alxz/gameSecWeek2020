@@ -395,27 +395,27 @@ function getAllStories() {
             storyId: 3,
             rmCoord: { x: 1, y: 0 },
             nextScene: 0,
-            lastScene: 7,
+            lastScene: 8,
             questCoord: { x: 500, y: 350 },
             decorXY: { x: 400, y: 200} ,
             sceneList: [
                 {
                     sceneId: 0,
-                    spriteId: 0,
+                    spriteId: 10,
                     objType: 'DECORATION',
-                    npcName: 'compDesk1',
-                    animKey: 'compDeskLock',
+                    npcName: 'compDeskScrBlank',
+                    animKey: 'compScrBlank',
                     moveTo: 'NO',
-                    zIndex: 1,
+                    zIndex: 0,
                     vectorXY: { x: 0, y: 0 },
-                    startXY: { x: 280, y: 450 },
-                    endXY: { x: 280, y: 450 },
-                    timeFrame: 1,
-                    txtLabel: 'Computer',
-                    txtStr: ' Computer: z-z-z...',
+                    startXY: { x: 400, y: 200 },
+                    endXY: { x: 400, y: 200 },
+                    timeFrame: 0,
+                    txtLabel: 'compScrBlank',
+                    txtStr: '',
                     initRead: false,
                     removeSprite: false,
-                    lastAnimKey: 'compDeskLock'
+                    lastAnimKey: 'compScrBlank'
                 },
                 {
                     sceneId: 1,
@@ -447,7 +447,7 @@ function getAllStories() {
                     vectorXY: { x: 0, y: -1 },
                     startXY: { x: 370, y: 350 }, //{ x: 650, y: 720 }
                     endXY: { x: 370, y: 250 },
-                    timeFrame: 2,
+                    timeFrame: 5,
                     txtLabel: 'EmplSpeech',
                     txtStr: ' Employee: I\'m expecting some important today \r\n lets see',
                     initRead: false,
@@ -501,7 +501,7 @@ function getAllStories() {
                     vectorXY: { x: 0, y: 0 },
                     startXY: { x: 370, y: 250 }, //{ x: 650, y: 720 }
                     endXY: { x: 370, y: 250 },
-                    timeFrame: 1,
+                    timeFrame: 5,
                     txtLabel: 'EmplSpeech',
                     txtStr: 'Employee: Oh, whats that? \n\r Must be important, must open it',
                     initRead: false,
@@ -520,7 +520,7 @@ function getAllStories() {
                     vectorXY: { x: 0, y: 0 },
                     startXY: { x: 400, y: 180 },
                     endXY: { x: 400, y: 180 },
-                    timeFrame: 1,
+                    timeFrame: 5,
                     txtLabel: 'compScrLoadingUserPw',
                     txtStr: ' Computer: Please login: \r\n your user name and password required',
                     initRead: false,
@@ -534,7 +534,7 @@ function getAllStories() {
                     npcName: 'compScreen6pcs',
                     animKey: 'compScreenFinal',
                     moveTo: 'NO',
-                    zIndex: 1,
+                    zIndex: 5,
                     vectorXY: { x: 0, y: 0 },
                     startXY: { x: 400, y: 180 },
                     endXY: { x: 400, y: 180 },
@@ -546,7 +546,7 @@ function getAllStories() {
                     lastAnimKey: 'compScreenFinal'
                 },
                 {
-                    sceneId: 7,
+                    sceneId: 8,
                     spriteId: 7,
                     objType: 'NPC',
                     npcName: 'DocWalk4w',
@@ -566,7 +566,7 @@ function getAllStories() {
             ]
         }
     ]
-};
+}
 
 function getSceneSprites(coordX, coordY) {
     return [
@@ -597,72 +597,6 @@ function getSceneSprites(coordX, coordY) {
                             frames: { spriteName: 'compDesk4x4', start: 4, end: 7 },
                             frameRate: 5,
                             repeat: 10
-                        }
-                    ]
-                },
-                {
-                    id: 8,
-                    isActive: false,
-                    objType: 'DECORATION',
-                    npcName: 'compDesk2',
-                    defaultKey: 'compDeskLock',
-                    npcCoordX : (480),
-                    npcCoordY : (720),
-                    zIndex: 1,
-                    animList: [
-                        {
-                            key: 'compDeskOpen',
-                            frames: { spriteName: 'compDesk4x4', start: 0, end: 3 },
-                            frameRate: 5,
-                            repeat: 10
-                        },
-                        {
-                            key: 'compDeskLock',
-                            frames: { spriteName: 'compDesk4x4', start: 4, end: 7 },
-                            frameRate: 5,
-                            repeat: 10
-                        }
-                    ]
-                },
-                {
-                    id: 9,
-                    isActive: false,
-                    objType: 'DECORATION',
-                    npcName: 'compScreen6pcs',
-                    defaultKey: 'compScrLoading',
-                    npcCoordX : (480),
-                    npcCoordY : (720),
-                    zIndex: 0,
-                    animList: [
-                        {
-                            key: 'compScrLoading',
-                            frames: { spriteName: 'ComputerScreenSet6', start: 0, end: 0 },
-                            frameRate: 5,
-                            repeat: 1
-                        },
-                        {
-                            key: 'compScrImportntMsg',
-                            frames: { spriteName: 'ComputerScreenSet6', start: 1, end: 1 },
-                            frameRate: 5,
-                            repeat: 1
-                        },
-                        {
-                            key: 'compScrLoadingHDeskMsg',
-                            frames: { spriteName: 'ComputerScreenSet6', start: 2, end: 2 },
-                            frameRate: 5,
-                            repeat: 1
-                        },
-                        {
-                            key: 'compScrLoadingUserPw',
-                            frames: { spriteName: 'ComputerScreenSet6', start: 3, end: 4 },
-                            frameRate: 5,
-                            repeat: 1
-                        },
-                        {
-                            key: 'compScreenFinal',
-                            frames: { spriteName: 'ComputerScreenSet6', start: 5, end: 5 },
-                            frameRate: 5,
-                            repeat: 0
                         }
                     ]
                 },
@@ -969,6 +903,96 @@ function getSceneSprites(coordX, coordY) {
                             frames: { spriteName: 'docWalk4w', start: 12, end: 15 },
                             frameRate: 5,
                             repeat: -1
+                        }
+                    ]
+                },
+                {
+                    id: 8,
+                    isActive: false,
+                    objType: 'DECORATION',
+                    npcName: 'compDesk2',
+                    defaultKey: 'compDeskLock',
+                    npcCoordX : (480),
+                    npcCoordY : (720),
+                    zIndex: 1,
+                    animList: [
+                        {
+                            key: 'compDeskOpen',
+                            frames: { spriteName: 'compDesk4x4', start: 0, end: 3 },
+                            frameRate: 5,
+                            repeat: 10
+                        },
+                        {
+                            key: 'compDeskLock',
+                            frames: { spriteName: 'compDesk4x4', start: 4, end: 7 },
+                            frameRate: 5,
+                            repeat: 10
+                        }
+                    ]
+                },
+                {
+                    id: 9,
+                    isActive: false,
+                    objType: 'DECORATION',
+                    npcName: 'compScreen6pcs',
+                    defaultKey: 'compScrLoading',
+                    npcCoordX : (480),
+                    npcCoordY : (720),
+                    zIndex: 0,
+                    animList: [
+                        {
+                            key: 'compScrLoading',
+                            frames: { spriteName: 'ComputerScreenSet6', start: 0, end: 0 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'compScrImportntMsg',
+                            frames: { spriteName: 'ComputerScreenSet6', start: 1, end: 1 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'compScrLoadingHDeskMsg',
+                            frames: { spriteName: 'ComputerScreenSet6', start: 2, end: 2 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'compScrLoadingUserPw',
+                            frames: { spriteName: 'ComputerScreenSet6', start: 3, end: 4 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'compScreenFinal',
+                            frames: { spriteName: 'ComputerScreenSet6', start: 5, end: 5 },
+                            frameRate: 5,
+                            repeat: 0
+                        }
+                    ]
+                },
+                {
+                    id: 10,
+                    isActive: false,
+                    objType: 'DECORATION',
+                    npcName: 'compDeskScrBlank',
+                    defaultKey: 'compScrBlank',
+                    npcCoordX : (480),
+                    npcCoordY : (720),
+                    zIndex: 0,
+                    animList: [
+                        {
+                            key: 'compScrGrey',
+                            frames: { spriteName: 'compDeskScrBlank', start: 1, end: 1 },
+                            frameRate: 5,
+                            repeat: 1
+                        },
+                        {
+                            key: 'compScrBlank',
+                            frames: { spriteName: 'compDeskScrBlank', start: 0, end: 0 },
+                            frameRate: 5,
+                            repeat: 1
                         }
                     ]
                 }
