@@ -94,9 +94,11 @@
    <div id="mainDiv" class="classmainDiv">
      <div id="phaserDiv" class="classPhaserDiv">
          <canvas></canvas>
-         <div class="subtitlesPanelContainer">
-         <div id="subtitles" class="subtitlesPanel">
-         </div>
+         <div class="subtitlesParentPanelContainer">
+             <div class="subtitlesPanelContainer">
+                 <div id="subtitles" class="subtitlesPanel">
+                 </div>
+             </div>
          </div>
      </div>
        <br/><br/>

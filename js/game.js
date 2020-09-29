@@ -158,7 +158,7 @@ App.prototype.start = function () {
         //==================
         _this = this;
         this.load.image('gold-key', 'png/goldenKey.png'); //gold-key
-        this.load.image('messageBoard', 'png/messageBoard600x400.png');
+        this.load.image('messageBoard', 'png/subTitleBack.png');
         this.load.image('star', 'assets/star.png');
         this.load.image('computerSetOff', 'png/ComputerSetOff.png'); //officeCompDesk
         this.load.spritesheet('gold-key-sprite', 'png/gold-key.png', { frameWidth: 40, frameHeight: 40 });

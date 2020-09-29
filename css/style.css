@@ -174,11 +174,23 @@ table#tableMiniMap {
 	min-width: 1024px;
 }
 .subtitlesPanelContainer {
+	/*background: #ffffff94;*/
+	/*!*background-image: url("../png/subTitleBack.png");*!*/
+	/*background-repeat: no-repeat;*/
+	/*background-size: cover;*/
+	min-height: 80px;
+	margin-right: ;: 10px;
+	padding: 10px;
+	color: white;
+}
+.subtitlesParentPanelContainer {
 	background: #ffffff94;
-	background-image: url("../png/messageBoard600x400.png");
+	background-image: url("../png/subTitleBack.png");
 	background-repeat: no-repeat;
 	background-size: cover;
-	min-height: 80px;
+	min-height: 85px;
+	margin: 5px;
+	padding: 5px;
 }
 .subtitlesPanel {
 	max-height: 80px;
