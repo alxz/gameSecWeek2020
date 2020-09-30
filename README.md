@@ -1,1 +1,3 @@
 # gameSecWeek2020
+Web browser game with questions and answers. 
+Uses Phaser v3, PHP as backend and a JavaScript scripts to provide the front...
